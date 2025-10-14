@@ -24,7 +24,7 @@ export const Header = ({
     defense,
     coins,
 }: HeaderProps) => (
-    <header className="bg-navy text-white p-4 font-pixel">
+    <header className="bg-navy text-white p-4 m-4 font-pixel border-2 rounded">
         <div className="flex flex-col md:flex-row md:justify-between md:items-center">
             <h1 className="text-sm md:text-lg">HOLA, {username.toUpperCase()}</h1>
             <span className="text-xs md:text-sm">Nivel {level}</span>
