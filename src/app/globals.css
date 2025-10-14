@@ -11,7 +11,7 @@
   --color-navy: #0F2233;
   --color-card: #0B1A28;
   --color-outline-red: #A43B3B;
-  --color-outline-blue: #2D61B6;
+  --color-outline-blue: #2f6bcb;
   --color-coin-bright: #FFB703;
   --color-coin-dark: #F18F01;
 }
@@ -25,6 +25,14 @@ body {
 /* Utilidades personalizadas */
 .bg-card {
   background-color: var(--color-card);
+}
+
+.text-outline-red {
+  color: var(--color-outline-red);
+}
+
+.text-outline-blue {
+  color: var(--color-outline-blue);
 }
 
 .text-coin-bright {
@@ -41,6 +49,10 @@ body {
 
 .border-outline-blue {
   border: 2px solid var(--color-outline-blue);
+}
+
+.border-coin-bright {
+  border: 2px solid var(--color-coin-bright);
 }
 
 .shadow-pixel {

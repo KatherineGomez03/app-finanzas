@@ -1,6 +1,5 @@
 import { StatBox } from './StatBox'
 import { ProgressBar } from './ProgressBar'
-import { Sword, Shield, Coins } from 'lucide-react'
 
 interface HeaderProps {
     username: string
@@ -33,9 +32,9 @@ export const Header = ({
 
         <div className="flex gap-4 mt-4">
             <div className="flex gap-4 mt-4">
-                <StatBox icon="attack" value={attack} borderColor="border-outline-red" textColor="text-white" />
-                <StatBox icon="defense" value={defense} borderColor="border-outline-blue" textColor="text-white" />
-                <StatBox icon="coins" value={coins} borderColor="border-yellow-500" textColor="text-coin-bright" />
+                <StatBox icon="attack" value={attack} borderColor="border-outline-red" textColor="text-outline-red" />
+                <StatBox icon="defense" value={defense} borderColor="border-outline-blue" textColor="text-outline-blue" />
+                <StatBox icon="coins" value={coins} borderColor="border-coin-bright" textColor="text-coin-bright" />
             </div>
         </div>
 
