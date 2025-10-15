@@ -58,3 +58,25 @@ body {
 .shadow-pixel {
   box-shadow: 0 0 4px var(--pixel-shadow);
 }
+
+/* para el panel */
+
+.category-alimentacion {
+  background-color: #5dd9c1;
+}
+
+.category-transporte {
+  background-color: #ff7f7f;
+}
+
+.category-entretenimiento {
+  background-color: #ffe599;
+}
+
+.category-servicios {
+  background-color: #95d5b2;
+}
+
+.category-otros {
+  background-color: #64b5f6;
+}

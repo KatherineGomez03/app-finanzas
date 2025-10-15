@@ -1,5 +1,6 @@
 import React from "react"
 import { Header } from "./header/Header"
+import { PanelContainer } from "./panel/PanelContainer"
 
 function App() {
     const userData = {
@@ -17,6 +18,7 @@ function App() {
     return (
         <div className="min-h-screen bg-gray-900 text-white">
             <Header {...userData} />
+            <PanelContainer />
         </div>
     )
 }
