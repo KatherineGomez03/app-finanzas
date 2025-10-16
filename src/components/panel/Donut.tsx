@@ -40,7 +40,7 @@ export const Donut: React.FC<DonutProps> = ({ data }) => {
   };
 
   return (
-    <div className="w-full max-w-xs mx-auto p-4">
+    <div className="w-full max-w-xs mx-auto p-2">
       <Doughnut data={chartData} options={options} />
     </div>
   );

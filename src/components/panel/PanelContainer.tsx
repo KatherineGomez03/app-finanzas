@@ -14,7 +14,7 @@ const mockExpenses = [
 
 export const PanelContainer = () => {
     return (
-        <div className="bg-gray-900 w-full max-w-md mx-auto p-4 m-2 rounded-lg shadow-lg border-2 rounded">
+        <div className="bg-gray-900 max-w-md p-4 m-2 relative w-full rounded-lg shadow-lg border-2 rounded">
             <Panel />
             <Donut data={mockExpenses} />
             <div className="mt-4">

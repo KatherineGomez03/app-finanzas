@@ -25,9 +25,9 @@ function App() {
 
 
     return (
-        <div className="min-h-screen bg-gray-900 text-white">
+        <div className="mx-4 min-h-screen text-white">
             <Header {...userData} />
-            <div className="px-4 m-2 items-center grid grid-cols-1 md:grid-cols-2">
+            <div className="m-2 flex justify-items-center grid grid-cols-1 md:grid-cols-2">
                 <PanelContainer />
                 <SaveContainer
                     current={mockSavings.current}

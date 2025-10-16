@@ -23,7 +23,7 @@ const DailyChart: FC<DailyChartProps> = ({ dailySavings }) => {
     };
 
     return (
-        <div className="px-4 py-2 w-[260px] h-[130px] md:w-[520px] md:h-[260px]">
+        <div className="mt-4 px-4 py-2">
             <Line data={data} />
         </div>
     );
