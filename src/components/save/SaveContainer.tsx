@@ -19,9 +19,9 @@ const SaveContainer: FC<SaveData> = ({ current, goal, remainingDays, dailySaving
         <div className="bg-gray-900 max-w-md p-4 m-2 relative w-full rounded-lg shadow-lg border-2 rounded">
             <h2 className="text-lg md:text-xl mb-2">Meta de Ahorro Mensual</h2>
             <SaveBar current={current} goal={goal} />
-            <div className="mt-2 flex justify-between items-center text-xs lg:text-sm">
-                <span className="text-yellow-400">~Faltan ${remaining}</span>
-                <span className="flex items-center gap-1 text-blue-400">
+            <div className="m-2 p-2 flex justify-around items-center text-sm">
+                <span className="flex text-yellow-400">~ Faltan ${remaining}</span>
+                <span className="flex text-blue-400">
                     <CalendarDays className="w-4 h-4" />
                     {remainingDays} días restantes
                 </span>
