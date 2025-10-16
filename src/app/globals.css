@@ -1,26 +1,82 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'PressStart2P';
+  src: url('/fonts/PressStart2P.ttf') format('truetype');
+  font-display: swap;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --pixel-shadow: #121a25;
+  --color-navy: #0F2233;
+  --color-card: #0B1A28;
+  --color-outline-red: #A43B3B;
+  --color-outline-blue: #2f6bcb;
+  --color-coin-bright: #FFB703;
+  --color-coin-dark: #F18F01;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'PressStart2P', system-ui, sans-serif;
+  background-color: var(--color-gray-900);
+  color: white;
+}
+
+/* Utilidades personalizadas */
+.bg-card {
+  background-color: var(--color-card);
+}
+
+.text-outline-red {
+  color: var(--color-outline-red);
+}
+
+.text-outline-blue {
+  color: var(--color-outline-blue);
+}
+
+.text-coin-bright {
+  color: var(--color-coin-bright);
+}
+
+.text-coin-dark {
+  color: var(--color-coin-dark);
+}
+
+.border-outline-red {
+  border: 2px solid var(--color-outline-red);
+}
+
+.border-outline-blue {
+  border: 2px solid var(--color-outline-blue);
+}
+
+.border-coin-bright {
+  border: 2px solid var(--color-coin-bright);
+}
+
+.shadow-pixel {
+  box-shadow: 0 0 4px var(--pixel-shadow);
+}
+
+/* para el panel */
+
+.category-alimentacion {
+  background-color: #5dd9c1;
+}
+
+.category-transporte {
+  background-color: #ff7f7f;
+}
+
+.category-entretenimiento {
+  background-color: #ffe599;
+}
+
+.category-servicios {
+  background-color: #95d5b2;
+}
+
+.category-otros {
+  background-color: #64b5f6;
 }
