@@ -2,6 +2,7 @@ import React from "react"
 import { Header } from "./header/Header"
 import { PanelContainer } from "./panel/PanelContainer"
 import SaveContainer from "./save/SaveContainer";
+import { ChallengeSection } from "./challenges/ChallengeSection";
 
 function App() {
     const userData = {
@@ -35,8 +36,9 @@ function App() {
                     remainingDays={mockSavings.remainingDays}
                     dailySavings={mockSavings.dailySavings}
                 />
+                
             </div>
-
+            <ChallengeSection />
         </div>
     )
 }
