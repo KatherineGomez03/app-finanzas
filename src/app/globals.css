@@ -80,3 +80,41 @@ body {
 .category-otros {
   background-color: #64b5f6;
 }
+
+/* para la tienda*/
+
+.item-card {
+  border: 2px solid #f0f0f0;
+}
+
+.rarity-común {
+  border-color: #aaa;
+}
+
+.rarity-raro {
+  border-color: #4f46e5;
+}
+
+.rarity-legendario {
+  border-color: #f59e0b;
+}
+
+.btn-buy {
+  background-color: #4f46e5;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-family: 'Press Start 2P', cursive;
+}
+
+.tab {
+  color: #ccc;
+  border: 1px solid #f0f0f0;
+  border-radius: 4px;
+}
+
+.tab-active {
+  background-color: #4f46e5;
+  color: white;
+}
