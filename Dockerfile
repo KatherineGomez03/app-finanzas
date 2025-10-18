@@ -35,7 +35,7 @@ COPY --from=development /app/public ./public
 COPY --from=development /app/node_modules ./node_modules
 
 # Exponer puerto
-EXPOSE 3000
+EXPOSE 3001
 
 # Comando para ejecutar la aplicación
 CMD ["pnpm", "start"]
