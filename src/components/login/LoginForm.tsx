@@ -58,12 +58,14 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
             {error && <p className="text-red-400 text-center">{error}</p>}
 
             <button
-                type="submit"
+                type="button"
+                onClick={() => window.location.href = "http://localhost:3001/home"} //CAMBIAR LUEGO PORFAVOOOR!!!!
                 className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 flex items-center justify-center gap-2"
             >
                 <LogIn className="w-4 h-4" />
                 ENTRAR AL REINO
             </button>
+
         </form>
     )
 }

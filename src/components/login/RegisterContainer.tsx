@@ -38,7 +38,7 @@ export const RegisterContainer = () => {
     }
 
     try {
-      const res = await fetch(`${process.env.BACKEND_PORT}/auth/register`, {
+      const res = await fetch(`${process.env.BACKEND_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),

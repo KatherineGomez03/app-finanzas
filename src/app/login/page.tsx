@@ -14,32 +14,34 @@ export default function AuthPage() {
 
     return (
         <main className="min-h-screen text-white font-pixel px-4 py-8 flex flex-col items-center justify-center">
-            <LoginHeader />
+            <div className='border-2 rounded p-4 m-4'>
+                <LoginHeader />
 
-            {view === 'login' ? (
-                <>
-                    <p className=" text-xs mb-4 text-center">
-                        ACCESO AL REINO<br />Ingresa tus credenciales de aventurero
-                    </p>
-                    <LoginForm onLoginSuccess={handleLoginSuccess} />
-                    <button
-                        onClick={() => setView('register')}
-                        className="mt-6 underline text-xs"
-                    >
-                        ¿Nuevo aventurero? Registrarse
-                    </button>
-                </>
-            ) : (
-                <>
-                    <RegisterContainer />
-                    <button
-                        onClick={() => setView('login')}
-                        className="mt-6 underline text-xs"
-                    >
-                        ¿Ya tienes cuenta? Iniciar sesión
-                    </button>
-                </>
-            )}
+                {view === 'login' ? (
+                    <>
+                        <p className=" text-xs mb-4 text-center">
+                            ACCESO AL REINO<br />Ingresa tus credenciales de aventurero
+                        </p>
+                        <LoginForm onLoginSuccess={handleLoginSuccess} />
+                        <button
+                            onClick={() => setView('register')}
+                            className="mt-6 underline text-xs"
+                        >
+                            ¿Nuevo aventurero? Registrarse
+                        </button>
+                    </>
+                ) : (
+                    <>
+                        <RegisterContainer />
+                        <button
+                            onClick={() => setView('login')}
+                            className="mt-6 underline text-xs"
+                        >
+                            ¿Ya tienes cuenta? Iniciar sesión
+                        </button>
+                    </>
+                )}
+            </div>
         </main>
     )
 }
