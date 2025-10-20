@@ -127,11 +127,11 @@ export function ChallengeSection() {
   return (
     <div className="space-y-6 px-2 md:px-4 py-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-primary flex items-center gap-2 text-sm md:text-base">
+        <h2 className="text-mission-primary flex items-center gap-2 text-sm md:text-base">
           <Target className="h-5 w-5" />
           MISIONES ACTIVAS
         </h2>
-        <Badge className="bg-blue-600 border border-blue-400 text-xs text-center">
+        <Badge className="bg-mission-primary border border-mission-primary text-xs text-center">
           {active.length} EN PROGRESO
         </Badge>
       </div>
@@ -146,11 +146,11 @@ export function ChallengeSection() {
       {completed.length > 0 && (
         <>
           <div className="flex items-center justify-between mt-8">
-            <h2 className="text-primary flex items-center gap-2 text-sm md:text-base">
-              <Trophy className="h-5 w-5 " />
+            <h2 className="text-mission-success flex items-center gap-2 text-sm md:text-base">
+              <Trophy className="h-5 w-5 text-mission-success"/>
                MISIONES COMPLETAS
             </h2>
-            <Badge className="bg-green-600 border border-green-500 text-xs text-center">
+            <Badge className="bg-mission-success border border-mission-success text-xs text-center">
               {completed.length} COMPLETAS
             </Badge>
           </div>
