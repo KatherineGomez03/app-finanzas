@@ -57,7 +57,7 @@ const ENEMIGOS_MENSUALES: Record<number, Enemy> = {
     habilidades: ["Maldición", "Brebaje Oscuro"],
     recompensas: ["140 monedas", "90 XP", "Ampolla de Sombras"],
   },
-  
+
 };
 
 /* =========================
@@ -128,7 +128,7 @@ export default function ArenaSection({ player }: ArenaProps = {}) {
   const [log, setLog] = useState<string[]>([]);
   const [ended, setEnded] = useState<boolean>(false);
 
-  // Consumibles (simples)
+  // Consumibles
   const [potsVida, setPotsVida] = useState<number>(0);
   const [potsVeneno, setPotsVeneno] = useState<number>(0);
 
@@ -167,7 +167,7 @@ export default function ArenaSection({ player }: ArenaProps = {}) {
     return Math.max(1, Math.floor(Math.random() * (max - min + 1)) + min);
   };
 
-  // enemigo elige una habilidad al azar y calcula daño
+  // enemigo elige una habilidad al azar y calcula ekl daño
   function enemyStrike() {
     const name =
       enemigo.habilidades[
@@ -274,7 +274,7 @@ export default function ArenaSection({ player }: ArenaProps = {}) {
         </div>
 
         <div className="grid md:grid-cols-2 gap-4">
-          {/* Tú */}
+          {/* yo */}
           <div className="card p-4">
             <h4 className="font-medium">🗡️ Maximiliano Guerra</h4>
             <Bar title="VIDA (Tú)" cur={playerHP} max={playerBase.maxHP} color="bg-red-500" />
@@ -329,7 +329,6 @@ export default function ArenaSection({ player }: ArenaProps = {}) {
           </ul>
         </div>
 
-        {/* Botonera – Atacar → Vida → Veneno → Reiniciar */}
         <div className="flex flex-col md:flex-row gap-3">
           <button
             onClick={atacar}
@@ -363,7 +362,6 @@ export default function ArenaSection({ player }: ArenaProps = {}) {
           </button>
         </div>
 
-        {/* Tips para testear sin esperar fin de mes */}
         {!forced && (
           <div className="text-[10px] opacity-60 mt-3">
           </div>
