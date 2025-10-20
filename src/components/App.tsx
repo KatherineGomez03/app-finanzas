@@ -5,7 +5,7 @@ import { Header } from "./header/Header";
 import { PanelContainer } from "./panel/PanelContainer";  
 import SaveContainer from "./save/SaveContainer";         // ← default (sin llaves)
 import Tabsnav from "./Tabsnav";                           
-import ArenaSection from "../components/ArenaSection";
+import ArenaSection from "@/components/ArenaSection";
 import { useSearchParams } from "next/navigation";   
 
 function App() {
@@ -39,20 +39,27 @@ function App() {
       </div>
 
       {tab === "arena" ? (
-        <div className="mx-auto max-w-5xl px-4">
-          <ArenaSection />
-        </div>
-      ) : (
-        <div className="mt-2 grid grid-cols-1 gap-4 md:grid-cols-2">
-          <PanelContainer />
-          <SaveContainer
-            current={mockSavings.current}
-            goal={mockSavings.goal}
-            remainingDays={mockSavings.remainingDays}
-            dailySavings={mockSavings.dailySavings}
-          />
-        </div>
-      )}
+  <div className="mx-auto max-w-5xl px-4">
+    <ArenaSection
+  player={{
+    nombre: userData.username,
+    maxHP: userData.maxHealth,
+    atk: userData.attack,
+  }}
+  />
+  </div>
+) : (
+  <div className="mt-2 grid grid-cols-1 gap-4 md:grid-cols-2">
+    <PanelContainer />
+    <SaveContainer
+      current={mockSavings.current}
+      goal={mockSavings.goal}
+      remainingDays={mockSavings.remainingDays}
+      dailySavings={mockSavings.dailySavings}
+    />
+  </div>
+)}
+
     </div>
   );
 }
