@@ -18,7 +18,7 @@ export default function Tabsnav() {
     <nav className="w-full flex justify-center">
       <div className="flex gap-2 px-2 py-1 rounded border border-[var(--grid)] bg-[var(--surface)]">
         {items.map(({ tab, label }) => {
-          const href = tab === "panel" ? "/" : `/?tab=${tab}`;
+          const href = tab === "panel" ? "/home" : `/home?tab=${tab}`;
           const isActive = active === tab;
           return (
             <Link

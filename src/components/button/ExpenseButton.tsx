@@ -42,26 +42,26 @@ export default function ExpenseButton({
   return (
     <>
       {/* BOTÓN TRIGGER PIXEL-ART */}
-      <div className="flex justify-center items-start p-2 w-auto h-auto">
+      <div className="flex justify-center sm:justify-end items-start">
   <button
     onClick={() => setOpen(true)}
-    className="
-      bg-[#6C7EFF] text-white border border-white
-      font-['PressStart2P',monospace] text-[7px]
-      px-[6px] py-[4px] tracking-wider uppercase
-      hover:bg-[#5A6BE0]
-      active:translate-y-[1px]
-      shadow-[1px_1px_0_0_#000]
-      rounded-none
-      inline-flex items-center gap-[4px]
-    "
+    data-active={open}  // ← para pintar como activo cuando el modal está abierto
+    className={[
+      // mismo “chip” que los tabs
+      "h-8 px-3 py-1 text-xs font-medium leading-none",
+      "inline-flex items-center gap-2 rounded-none",
+      "border border-[var(--grid)] bg-[var(--surface)] text-[var(--text-primary)]",
+      // efectos
+      "hover:bg-[var(--color-card)] transition-colors duration-150",
+      // estado activo igual al tab seleccionado
+      "data-[active=true]:bg-[var(--mission-primary)] data-[active=true]:text-black data-[active=true]:border-white"
+    ].join(" ")}
   >
-    <Plus className="h-2.5 w-2.5" />
+    <Plus className="h-3 w-3 -mt-px" />
     Registrar Gasto
   </button>
 </div>
 
-      
 
       {/* MODAL SIMPLE (sin librerías) */}
       {open && (
@@ -127,7 +127,9 @@ export default function ExpenseButton({
                   step="0.01"
                   value={amount}
                   onChange={(e) =>
-                    setAmount(e.target.value === "" ? "" : Number(e.target.value))
+                    setAmount(
+                      e.target.value === "" ? "" : Number(e.target.value)
+                    )
                   }
                   placeholder="0.00"
                   className="
