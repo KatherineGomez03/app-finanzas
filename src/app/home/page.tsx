@@ -6,7 +6,8 @@ import { Header } from "@/components/header/Header";
 import Tabsnav from "@/components/Tabsnav";
 import ArenaSection from "@/components/ArenaSection";
 import { PanelContainer } from "@/components/panel/PanelContainer";
-import SaveContainer from "@/components/save/SaveContainer";
+import TestBalanceStatic from "@/components/balance/TestBalanceStatic";
+import BalanceSection from "@/components/balance/BalanceSection";
 
 function App() {
     const userData = {
@@ -29,12 +30,56 @@ function App() {
         dailySavings: [50, 75, 100, 60, 90, 120, 80, 120, 70, 85, 95, 63, 100],
     };
 
+    const mockData = {
+        month: "Octubre",
+        categories: [
+            {
+                category: "Alimentación",
+                current: 1500,
+                previous: 1300,
+                color: "green",
+            },
+            {
+                category: "Transporte",
+                current: 1000,
+                previous: 1200,
+                color: "red",
+            },
+            {
+                category: "Entretenimiento",
+                current: 750,
+                previous: 500,
+                color: "yellow",
+            },
+            {
+                category: "Servicios",
+                current: 1250,
+                previous: 1100,
+                color: "red",
+            },
+            {
+                category: "Otros",
+                current: 500,
+                previous: 600,
+                color: "yellow",
+            },
+        ],
+    };
+
+    const mockExpenses = [
+        { category: "Alimentación", amount: 1500, color: "#5dd9c1" },
+        { category: "Transporte", amount: 1000, color: "#ff7f7f" },
+        { category: "Entretenimiento", amount: 750, color: "#ffe599" },
+        { category: "Servicios", amount: 1250, color: "#95d5b2" },
+        { category: "Otros", amount: 500, color: "#64b5f6" }
+    ];
+
     return (
         <div className="mx-4 min-h-screen text-white">
             <Header {...userData} />
 
             {/* Navbar debajo de la experiencia */}
-            <div className="mx-auto max-w-5xl px-4 py-3">
+            <div className="w-full px-4 py-3 sm:max-w-5xl sm:mx-auto">
                 <Tabsnav />
             </div>
 
@@ -43,14 +88,13 @@ function App() {
                     <ArenaSection />
                 </div>
             ) : (
-                <div className="mt-2 grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div className="m-2 grid grid-cols-1 gap-3 md:grid-cols-3">
+
+
                     <PanelContainer />
-                    <SaveContainer
-                        current={mockSavings.current}
-                        goal={mockSavings.goal}
-                        remainingDays={mockSavings.remainingDays}
-                        dailySavings={mockSavings.dailySavings}
-                    />
+                    {/* <BalanceSection userId={""}/> */}
+                    <TestBalanceStatic />
+
                 </div>
             )}
         </div>

@@ -19,7 +19,7 @@ export default function AuthPage() {
 
                 {view === 'login' ? (
                     <>
-                        <p className=" text-xs mb-4 text-center">
+                        <p className=" text-sm mb-4 text-center">
                             ACCESO AL REINO<br />Ingresa tus credenciales de aventurero
                         </p>
                         <LoginForm onLoginSuccess={handleLoginSuccess} />
