@@ -4,11 +4,11 @@ import { useSearchParams } from "next/navigation";
 
 const items = [
   { tab: "panel",     label: "Panel" },
+
+  { tab: "misiones",    label: "Misiones" },
+=======
   { tab: "gastos",    label: "Gastos" },
-  { tab: "tienda",    label: "Tienda" },
-  { tab: "inventario",label: "Inventario" },
-  { tab: "arena",     label: "Arena" },
-];
+
 
 export default function Tabsnav() {
   const sp = useSearchParams();
@@ -26,8 +26,10 @@ export default function Tabsnav() {
               href={href}
               className={[
                 "px-3 py-1 text-xs font-medium border border-[var(--grid)]",
-                isActive ? "bg-[var(--primary)] text-black"
-                         : "text-[var(--text-primary)] hover:bg-black/30"
+
+                isActive ? "bg-[var(--mission-primary)] text-black border-white"
+                         : "text-[var(--text-primary)] hover:bg-[var(--color-card)] border-[var(--grid)]"
+
               ].join(" ")}
             >
               {label}
