@@ -14,19 +14,25 @@ const mockExpenses = [
 
 export const PanelContainer = () => {
     return (
-        <div className="bg-gray-900 max-w-md p-4 m-2 relative w-full rounded-lg shadow-lg border-2 rounded">
+        <div className="col-span-2 p-4 m-2 w-full rounded-lg shadow-lg border-2">
             <Panel />
-            <Donut data={mockExpenses} />
-            <div className="mt-4">
-                {mockExpenses.map((item, index) => (
-                    <LegendItem
-                        key={index}
-                        label={item.category}
-                        amount={item.amount}
-                        color={item.color}
-                    />
-                ))}
-            </div>
+
+            <section className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
+                <div className="w-40 sm:w-60">
+                    <Donut data={mockExpenses} />
+                </div>
+
+                <div className="w-full m-4">
+                    {mockExpenses.map((item, index) => (
+                        <LegendItem
+                            key={index}
+                            label={item.category}
+                            amount={item.amount}
+                            color={item.color}
+                        />
+                    ))}
+                </div>
+            </section>
         </div>
     );
 };
