@@ -1,5 +1,6 @@
 "use client";
 
+
 import React from "react";
 import { Header } from "./header/Header";                
 import { PanelContainer } from "./panel/PanelContainer";  
@@ -31,6 +32,7 @@ function App() {
     remainingDays: 14,
     dailySavings: [50, 75, 100, 60, 90, 120, 80, 120, 70, 85, 95, 63, 100],
   };
+
   return (
   <div className="mx-4 min-h-screen text-white">
     <Header {...userData} />
@@ -100,10 +102,12 @@ function App() {
           />
         </div>
       )}
+
     */}
   </div> 
 );
 
 }
+
 
 export default App;
