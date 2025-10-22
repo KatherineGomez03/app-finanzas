@@ -44,6 +44,7 @@ export const RegisterContainer = () => {
         body: JSON.stringify(form),
       })
 
+      console.log(form)
       const data = await res.json()
       if (!res.ok) throw new Error(data.message || 'Error al registrar')
 
