@@ -92,16 +92,7 @@ function App() {
       <div className="mx-auto max-w-5xl px-4 py-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
 
         <Tabsnav />
-        <ExpenseButton
-          onSubmit={({ description, amount, category, date }) => {
-            console.log("Nuevo gasto registrado:", {
-              description,
-              amount,
-              category,
-              date,
-            });
-          }}
-        />
+        <ExpenseButton />
       </div>
 
 

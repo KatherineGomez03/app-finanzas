@@ -2,36 +2,39 @@
 
 import { useState } from "react";
 import { Plus, Wallet } from "lucide-react";
+import { useRegisterExpense } from "@/hooks/useRegisterExpense";
 
-type ExpensePayload = {
-  description: string;
-  amount: number;
-  category: string;
-  date: string; // YYYY-MM-DD
-};
-
-export default function ExpenseButton({
-  onSubmit,
-}: {
-  onSubmit: (data: ExpensePayload) => void;
-}) {
+export default function ExpenseButton() {
   const [open, setOpen] = useState(false);
-
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState<number | "">("");
   const [category, setCategory] = useState("");
   const [date, setDate] = useState<string>(
     new Date().toISOString().slice(0, 10)
   );
+  const [rpgMessage, setRpgMessage] = useState("");
 
-  const handleSubmit = () => {
+  const { registerExpense, loading, error } = useRegisterExpense();
+
+  const handleSubmit = async () => {
     if (!description.trim() || amount === "" || !category || !date) return;
-    onSubmit({
+
+    const userId = window.localStorage.getItem("userid");
+    if (!userId) return;
+
+    await registerExpense({
       description: description.trim(),
       amount: Number(amount),
       category,
       date,
+      userId,
     });
+
+    // Feedback RPG
+    setRpgMessage(`-${amount} oro gastado en ${category} 💰`);
+    setTimeout(() => setRpgMessage(""), 2000);
+
+    // Reset form
     setOpen(false);
     setDescription("");
     setAmount("");
@@ -39,8 +42,16 @@ export default function ExpenseButton({
     setDate(new Date().toISOString().slice(0, 10));
   };
 
+
   return (
+
     <>
+
+      {rpgMessage && (
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-[var(--color-navy)] text-yellow-300 border border-yellow-500 px-4 py-2 font-['PressStart2P'] text-xs animate-bounce z-50">
+          {rpgMessage}
+        </div>
+      )}
       {/* BOTÓN TRIGGER PIXEL-ART */}
       <div className="flex justify-center sm:justify-end items-start bg-[var(--color-coin-dark)] border-white">
         <button
@@ -212,3 +223,7 @@ export default function ExpenseButton({
     </>
   );
 }
+function registerExpense(arg0: { description: string; amount: number; category: string; date: string; userId: string; }) {
+  throw new Error("Function not implemented.");
+}
+

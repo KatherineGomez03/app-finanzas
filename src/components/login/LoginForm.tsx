@@ -21,6 +21,7 @@ export const LoginForm = () => {
             if (!res.ok) throw new Error(data.message || 'Error de inicio de sesión')
 
             localStorage.setItem('token', data.access_token)
+            localStorage.setItem('userid', data.user._id) //me guardo el id
             window.location.href = '/home'
         } catch (err: any) {
             setError(err.message)
