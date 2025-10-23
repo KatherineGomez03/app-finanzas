@@ -14,16 +14,19 @@
   --color-outline-blue: #2f6bcb;
   --color-coin-bright: #FFB703;
   --color-coin-dark: #F18F01;
-  --mission-primary: #13d2e0;      
-  --mission-success: #1FDF64;      
+  --mission-primary: #13d2e0;
+  --mission-success: #1FDF64;
   --mission-reward-border: #FF4D00;
-  --mission-reward-text: #FFD60A;  
+  --mission-reward-text: #FFD60A;
 }
 
 body {
   font-family: 'PressStart2P', system-ui, sans-serif;
   background-color: var(--color-gray-900);
   color: white;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* Utilidades personalizadas */
@@ -87,18 +90,39 @@ body {
 
 /*misiones*/
 
-.bg-mission-primary { background-color: var(--mission-primary); }
-.text-mission-primary { color: var(--mission-primary); }
-.border-mission-primary { border-color: var(--mission-primary); }
+.bg-mission-primary {
+  background-color: var(--mission-primary);
+}
 
-.bg-mission-success { background-color: var(--mission-success); }
-.text-mission-success { color: var(--mission-success); }
-.border-mission-success { border-color: var(--mission-success); }
+.text-mission-primary {
+  color: var(--mission-primary);
+}
 
-.text-mission-reward { color: var(--mission-reward-text); }
-.border-mission-reward { border-color: var(--mission-reward-border); }
+.border-mission-primary {
+  border-color: var(--mission-primary);
+}
+
+.bg-mission-success {
+  background-color: var(--mission-success);
+}
+
+.text-mission-success {
+  color: var(--mission-success);
+}
+
+.border-mission-success {
+  border-color: var(--mission-success);
+}
+
+.text-mission-reward {
+  color: var(--mission-reward-text);
+}
+
+.border-mission-reward {
+  border-color: var(--mission-reward-border);
+}
 
 .shadow-mission {
   box-shadow: 0 0 6px var(--mission-primary),
-              0 0 8px var(--mission-success);
+    0 0 8px var(--mission-success);
 }

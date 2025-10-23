@@ -77,24 +77,24 @@ function App() {
   ];
 
   return (
-    <div className="mx-4 min-h-screen text-white">
+    <div className="mx-4 text-white">
       <Header {...userData} />
 
       {/* Navbar debajo de la experiencia */}
-     <div className="mx-auto max-w-5xl px-4 py-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-  
-  <Tabsnav />
-  <ExpenseButton
-    onSubmit={({ description, amount, category, date }) => {
-      console.log("Nuevo gasto registrado:", {
-        description,
-        amount,
-        category,
-        date,
-      });
-    }}
-  />
-</div>
+      <div className="mx-auto max-w-5xl px-4 py-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+
+        <Tabsnav />
+        <ExpenseButton
+          onSubmit={({ description, amount, category, date }) => {
+            console.log("Nuevo gasto registrado:", {
+              description,
+              amount,
+              category,
+              date,
+            });
+          }}
+        />
+      </div>
 
 
       {tab === "misiones" && (
@@ -111,15 +111,17 @@ function App() {
         </div>
       )}
 
-
       {tab === "panel" && (
-        <div className="m-2 flex justify-around gap-4 md:grid-cols-2">
+        <div className="m-2 flex flex-col gap-2 md:flex-row md:justify-around">
+
           <PanelContainer />
           {/* <BalanceSection userId={""}/> */}
           <TestBalanceStatic />
+
         </div>
-      )}
-    </div>
+      )
+      }
+    </div >
   );
 }
 export default App;

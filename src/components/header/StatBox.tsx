@@ -14,8 +14,12 @@ const IconMap = {
 }
 
 export const StatBox = ({ icon, value, borderColor, textColor }: StatBoxProps) => (
-    <div className={`flex items-center gap-2 px-3 py-2 rounded bg-opacity-20 ${borderColor} ${textColor}`}>
+    <div
+        className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-2 rounded bg-opacity-20 ${borderColor} ${textColor} text-xs sm:text-sm`}
+    >
         {IconMap[icon]}
-        <span className="text-sm">{value}</span>
+        <span>{value}</span>
     </div>
+
+
 )
