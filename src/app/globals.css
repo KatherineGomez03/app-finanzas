@@ -18,11 +18,12 @@
   --mission-success: #1FDF64;
   --mission-reward-border: #FF4D00;
   --mission-reward-text: #FFD60A;
+  --back: #0e1424;
 }
 
 body {
   font-family: 'PressStart2P', system-ui, sans-serif;
-  background-color: var(--color-gray-900);
+  background-color: var(--back);
   color: white;
   width: 80%;
   margin-left: auto;

@@ -64,12 +64,12 @@ export default function BalanceSectionStatic({ current, previous }: Props) {
     };
 
     return (
-        <section className="bg-gray-900 max-w-md p-4 m-2 relative w-full rounded-lg shadow-lg border-2 rounded text-white">
+        <section className="max-w-md p-4 m-2 relative w-full rounded-lg shadow-lg border-2 rounded text-white">
             <div className="flex items-center gap-2 mb-4">
                 <BarChart3 className="w-5 h-5 text-cyan-400" />
                 <h2 className="text-lg">Balance</h2>
             </div>
-            <div className="bg-gray-900 p-4 rounded-lg">
+            <div className="p-4 rounded-lg">
                 <div className="w-full mx-auto p-2 animate-fade-in">
                     <Bar data={chartData} options={chartOptions} />
                 </div>
