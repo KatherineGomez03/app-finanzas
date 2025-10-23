@@ -1,11 +1,7 @@
 import { useState } from 'react'
 import { LogIn } from 'lucide-react'
 
-interface LoginFormProps {
-    onLoginSuccess: (token: string) => void
-}
-
-export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
+export const LoginForm = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
@@ -15,7 +11,7 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
         setError('')
 
         try {
-            const res = await fetch(`${process.env.BACKEND_PORT}/auth/login`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
@@ -24,7 +20,8 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
             const data = await res.json()
             if (!res.ok) throw new Error(data.message || 'Error de inicio de sesión')
 
-            onLoginSuccess(data.access_token)
+            localStorage.setItem('token', data.access_token)
+            window.location.href = '/home'
         } catch (err: any) {
             setError(err.message)
         }
@@ -58,14 +55,12 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
             {error && <p className="text-red-400 text-center">{error}</p>}
 
             <button
-                type="button"
-                onClick={() => window.location.href = "http://localhost:3001/home"} //CAMBIAR LUEGO PORFAVOOOR!!!!
+                type="submit"
                 className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 flex items-center justify-center gap-2"
             >
                 <LogIn className="w-4 h-4" />
                 ENTRAR AL REINO
             </button>
-
         </form>
     )
 }
