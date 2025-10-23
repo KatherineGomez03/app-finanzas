@@ -10,6 +10,7 @@ import TestBalanceStatic from "@/components/balance/TestBalanceStatic";
 import BalanceSection from "@/components/balance/BalanceSection";
 import { ChallengeSection } from "@/components/challenges/ChallengeSection";
 import ExpenseButton from "@/components/button/ExpenseButton";
+import { useUserStats } from '@/hooks/useUserStats'
 
 function App() {
   const userData = {
@@ -76,9 +77,16 @@ function App() {
     { category: "Otros", amount: 500, color: "#64b5f6" },
   ];
 
+  const { stats, loading, error } = useUserStats()
+
+  if (loading) return <p className="text-white font-pixel">Cargando estadísticas...</p>
+  if (error || !stats) return <p className="text-red-400 font-pixel">Error: {error}</p>
+
+  console.log(stats)
+
   return (
     <div className="mx-4 text-white">
-      <Header {...userData} />
+      <Header {...stats} />
 
       {/* Navbar debajo de la experiencia */}
       <div className="mx-auto max-w-5xl px-4 py-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
