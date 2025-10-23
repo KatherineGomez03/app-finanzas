@@ -6,7 +6,7 @@ const items = [
   { tab: "panel",     label: "Panel" },
   { tab: "misiones",    label: "Misiones" },
   { tab: "tienda",    label: "Tienda" },
-  { tab: "inventario",label: "Inventario" },
+  { tab: "inventory",label: "Inventario" },
   { tab: "arena",     label: "Arena" },
 ];
 

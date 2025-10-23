@@ -9,11 +9,10 @@ import { useSearchParams } from "next/navigation";
 function daysToMonthEnd(d: Date = new Date()) {
   const y = d.getFullYear();
   const m = d.getMonth();
-  const last = new Date(y, m + 1, 0); // último día del mes
+  const last = new Date(y, m + 1, 0);
   const diff = Math.ceil((last.getTime() - d.getTime()) / (1000 * 60 * 60 * 24));
   return Math.max(diff, 0);
 }
-
 function isLastDayOfMonth(d: Date = new Date()) {
   const y = d.getFullYear();
   const m = d.getMonth();
@@ -57,7 +56,6 @@ const ENEMIGOS_MENSUALES: Record<number, Enemy> = {
     habilidades: ["Maldición", "Brebaje Oscuro"],
     recompensas: ["140 monedas", "90 XP", "Ampolla de Sombras"],
   },
-
 };
 
 /* =========================
@@ -72,25 +70,28 @@ type ArenaProps = {
 };
 
 /* =========================
-   UI helpers
+   Barra de vida (usa estilos de missions)
    ========================= */
-function Bar({
-  title,
+function HPBar({
+  label,
   cur,
   max,
-  color = "bg-red-500",
+  fillClass = "",
 }: {
-  title: string;
+  label: string;
   cur: number;
   max: number;
-  color?: string;
+  fillClass?: string;
 }) {
   const pct = Math.max(0, Math.round((cur / max) * 100));
   return (
-    <div className="p-3 rounded bg-[var(--surface)]">
-      <div className="text-xs opacity-80 mb-1">{title}</div>
-      <div className="h-3 w-full rounded bg-black/40 overflow-hidden">
-        <div className={`h-3 ${color}`} style={{ width: `${pct}%` }} />
+    <div>
+      <div className="text-xs opacity-80 mb-1">{label}</div>
+      <div className="hpbar">
+        <div
+          className={`hpbar__fill ${fillClass}`}
+          style={{ width: `${pct}%` }}
+        />
       </div>
       <div className="text-xs opacity-60 mt-1">
         {cur}/{max}
@@ -132,9 +133,7 @@ export default function ArenaSection({ player }: ArenaProps = {}) {
   const [potsVida, setPotsVida] = useState<number>(0);
   const [potsVeneno, setPotsVeneno] = useState<number>(0);
 
-  /* ============
-     Lógica
-     ============ */
+  /* ===== Lógica ===== */
   function appendLog(line: string) {
     setLog((l) => [line, ...l].slice(0, 120));
   }
@@ -147,19 +146,6 @@ export default function ArenaSection({ player }: ArenaProps = {}) {
     setLog([]);
   }
 
-  function start() {
-    if (!hoyEsBatalla) {
-      appendLog("⚠️ La batalla solo está disponible el último día del mes.");
-      return;
-    }
-    if (ended) {
-      appendLog("✔️ Batalla reiniciada.");
-      reset();
-      return;
-    }
-    appendLog("⚔️ ¡La batalla comienza!");
-  }
-
   // daño aleatorio moderado según el ATK (±20%)
   const roll = (atk: number) => {
     const min = Math.floor(atk * 0.8);
@@ -167,14 +153,14 @@ export default function ArenaSection({ player }: ArenaProps = {}) {
     return Math.max(1, Math.floor(Math.random() * (max - min + 1)) + min);
   };
 
-  // enemigo elige una habilidad al azar y calcula ekl daño
+  // enemigo elige una habilidad al azar y calcula el daño
   function enemyStrike() {
     const name =
       enemigo.habilidades[
         Math.floor(Math.random() * enemigo.habilidades.length)
       ] ?? "ataque";
     let dmg = roll(enemigo.atk);
-    if (/(mordisco|aliento)/i.test(name)) dmg = Math.round(dmg * 1.15); // un toque de variedad
+    if (/(mordisco|aliento)/i.test(name)) dmg = Math.round(dmg * 1.15);
     return { name, dmg };
   }
 
@@ -206,7 +192,6 @@ export default function ArenaSection({ player }: ArenaProps = {}) {
       appendLog("🎉 ¡Victoria! Recompensas: " + enemigo.recompensas.join(", "));
       return;
     }
-
     turnoEnemigo(playerHP);
   }
 
@@ -221,7 +206,6 @@ export default function ArenaSection({ player }: ArenaProps = {}) {
     setPlayerHP(next);
     setPotsVida((p) => p - 1);
     appendLog(`🧪 Usas Poción de Vida (+${heal})`);
-
     turnoEnemigo(next);
   }
 
@@ -242,86 +226,80 @@ export default function ArenaSection({ player }: ArenaProps = {}) {
       appendLog("🎉 ¡Victoria! Recompensas: " + enemigo.recompensas.join(", "));
       return;
     }
-
     turnoEnemigo(playerHP);
   }
 
-  /* ============
-     UI
-     ============ */
+  /* ===== UI ===== */
   return (
-    <div className="space-y-8">
-      {/* Título / subtítulo */}
-      <div>
-        <h2 className="text-lg opacity-70">✖ ARENA DE COMBATE</h2>
-        <div className="text-xs opacity-60">
-          Enfréntate a los enemigos del ahorro y demuestra tu valor
-        </div>
+    <section className="mission-section space-y-6">
+      {/* Título */}
+      <div className="mission-title">✖ ARENA DE COMBATE</div>
+      <div className="text-xs opacity-70">
+        <span className="badge badge--outline">Beta</span>&nbsp;Enfréntate a los
+        enemigos del ahorro y demuestra tu valor
       </div>
 
       {/* Mensaje de countdown */}
       {!hoyEsBatalla && (
-        <div className="mt-2 text-xs opacity-80">
+        <div className="text-xs opacity-80">
           Faltan <b>{diasRestantes}</b> día(s) para la batalla (último día del mes).
         </div>
       )}
 
       {/* Enemigo del mes */}
-      <div>
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="font-medium">Enemigo del mes</h3>
-          <span className="opacity-70">Nivel {enemigo.nivel}</span>
+      <div className="flex items-center justify-between">
+        <div className="font-medium">Enemigo del mes</div>
+        <span className="badge badge--primary">Nivel {enemigo.nivel}</span>
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-4">
+        {/* yo */}
+        <div className="mission-panel">
+          <div className="font-medium mb-2">🗡️ {playerBase.nombre ?? "Tú"}</div>
+          <HPBar label="VIDA (Tú)" cur={playerHP} max={playerBase.maxHP} fillClass="bg-red-500" />
+          <div className="text-xs mt-2">ATK: {playerBase.atk}</div>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-4">
-          {/* yo */}
-          <div className="card p-4">
-            <h4 className="font-medium">🗡️ Maximiliano Guerra</h4>
-            <Bar title="VIDA (Tú)" cur={playerHP} max={playerBase.maxHP} color="bg-red-500" />
-            <div className="text-xs mt-2">ATK: {playerBase.atk}</div>
-          </div>
+        {/* Enemigo */}
+        <div className="mission-panel">
+          <div className="font-medium mb-2">🧟 {enemigo.nombre}</div>
+          <HPBar label="VIDA (Enemigo)" cur={bossHP} max={enemigo.maxHP} fillClass="bg-red-500" />
+          <div className="text-xs mt-2">ATK: {enemigo.atk}</div>
+        </div>
+      </div>
 
-          {/* Enemigo */}
-          <div className="card p-4">
-            <h4 className="font-medium">🧟 {enemigo.nombre}</h4>
-            <Bar title="VIDA (Enemigo)" cur={bossHP} max={enemigo.maxHP} color="bg-red-500" />
-            <div className="text-xs mt-2">ATK: {enemigo.atk}</div>
-          </div>
+      {/* Habilidades y recompensas */}
+      <div className="grid md:grid-cols-2 gap-4">
+        <div className="mission-panel">
+          <div className="font-medium mb-2">Habilidades</div>
+          <ul className="list-disc list-inside space-y-1 text-sm">
+            {enemigo.habilidades.map((h, i) => (
+              <li key={i}>{h}</li>
+            ))}
+          </ul>
         </div>
 
-        {/* Habilidades y recompensas */}
-        <div className="grid md:grid-cols-2 gap-4 mt-6">
-          <div className="card p-3 bg-[var(--surface)] rounded border border-[var(--grid)]">
-            <div className="font-medium mb-2">Habilidades</div>
-            <ul className="list-disc list-inside space-y-1 text-sm">
-              {enemigo.habilidades.map((h, i) => (
-                <li key={i}>{h}</li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="card p-3 bg-[var(--surface)] rounded border border-[var(--grid)]">
-            <div className="font-medium mb-2">Recompensas por victoria</div>
-            <ul className="list-disc list-inside space-y-1 text-sm">
-              {enemigo.recompensas.map((r, i) => (
-                <li key={i}>{r}</li>
-              ))}
-            </ul>
-          </div>
+        <div className="mission-panel">
+          <div className="font-medium mb-2">Recompensas por victoria</div>
+          <ul className="list-disc list-inside space-y-1 text-sm">
+            {enemigo.recompensas.map((r, i) => (
+              <li key={i}>{r}</li>
+            ))}
+          </ul>
         </div>
       </div>
 
       {/* Acciones */}
-      <div className="card p-4 mt-6">
+      <div className="mission-panel">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="font-medium">Acciones</h3>
-          <span className="text-xs opacity-70">
-            Turno: {turno === "tú" ? "Tú" : "Enemigo"}
+          <div className="font-medium">Acciones</div>
+          <span className="badge">
+            Turno:&nbsp;{turno === "tú" ? "Tú" : "Enemigo"}
           </span>
         </div>
 
         {/* Registro arriba de la botonera */}
-        <div className="bg-[var(--surface)] border border-[var(--grid)] rounded-lg p-3 mb-4 max-h-56 overflow-auto">
+        <div className="bg-[var(--color-card)] border border-[var(--grid)] rounded-lg p-3 mb-4 max-h-56 overflow-auto">
           <ul className="text-xs space-y-1">
             {log.map((l, i) => (
               <li key={i}>• {l}</li>
@@ -329,11 +307,12 @@ export default function ArenaSection({ player }: ArenaProps = {}) {
           </ul>
         </div>
 
+        {/* Botonera con estilos */}
         <div className="flex flex-col md:flex-row gap-3">
           <button
             onClick={atacar}
             disabled={!hoyEsBatalla || ended || turno !== "tú"}
-            className="inline-flex items-center justify-center rounded-xl border-2 border-red-300 bg-red-600 hover:bg-red-700 text-white px-6 py-3 font-semibold tracking-wide shadow-[0_2px_0_#000] transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn btn--danger"
           >
             ❌ ATACAR
           </button>
@@ -341,7 +320,7 @@ export default function ArenaSection({ player }: ArenaProps = {}) {
           <button
             onClick={usarPocionVida}
             disabled={!hoyEsBatalla || ended || turno !== "tú"}
-            className="inline-flex items-center justify-center rounded-xl border-2 border-emerald-300 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-3 font-semibold tracking-wide shadow-[0_2px_0_#000] transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn btn--success"
           >
             💚 USAR POCIÓN
           </button>
@@ -349,24 +328,22 @@ export default function ArenaSection({ player }: ArenaProps = {}) {
           <button
             onClick={usarPocionVeneno}
             disabled={!hoyEsBatalla || ended || turno !== "tú"}
-            className="inline-flex items-center justify-center rounded-xl border-2 border-purple-300 bg-purple-600 hover:bg-purple-700 text-white px-5 py-3 font-semibold tracking-wide shadow-[0_2px_0_#000] transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn btn--venom"
           >
             ☠️ VENENO
           </button>
 
-          <button
-            onClick={reset}
-            className="inline-flex items-center justify-center md:ml-auto rounded-xl border-2 border-slate-400 bg-slate-800 hover:bg-slate-700 text-white px-5 py-3 font-semibold tracking-wide shadow-[0_2px_0_#000] transition"
-          >
+          <button onClick={reset} className="btn btn--ghost md:ml-auto">
             ⟲ REINICIAR
           </button>
         </div>
 
         {!forced && (
           <div className="text-[10px] opacity-60 mt-3">
+            para probar sin esperar fin de mes, abrí Arena con <code>?forceBattle=1</code>.
           </div>
         )}
       </div>
-    </div>
+    </section>
   );
 }
