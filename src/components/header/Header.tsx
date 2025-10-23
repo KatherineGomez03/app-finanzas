@@ -31,11 +31,9 @@ export const Header = ({
         </div>
 
         <div className="flex gap-4 mt-4">
-            <div className="flex gap-4 mt-4">
-                <StatBox icon="attack" value={attack} borderColor="border-outline-red" textColor="text-outline-red" />
-                <StatBox icon="defense" value={defense} borderColor="border-outline-blue" textColor="text-outline-blue" />
-                <StatBox icon="coins" value={coins} borderColor="border-coin-bright" textColor="text-coin-bright" />
-            </div>
+            <StatBox icon="attack" value={attack} borderColor="border-outline-red" textColor="text-outline-red" />
+            <StatBox icon="defense" value={defense} borderColor="border-outline-blue" textColor="text-outline-blue" />
+            <StatBox icon="coins" value={coins} borderColor="border-coin-bright" textColor="text-coin-bright" />
         </div>
 
         <div className="mt-4 space-y-2">

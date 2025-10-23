@@ -14,16 +14,19 @@
   --color-outline-blue: #2f6bcb;
   --color-coin-bright: #FFB703;
   --color-coin-dark: #F18F01;
-  --mission-primary: #13d2e0;      
-  --mission-success: #1FDF64;      
+  --mission-primary: #13d2e0;
+  --mission-success: #1FDF64;
   --mission-reward-border: #FF4D00;
-  --mission-reward-text: #FFD60A;  
+  --mission-reward-text: #FFD60A;
 }
 
 body {
   font-family: 'PressStart2P', system-ui, sans-serif;
   background-color: var(--color-gray-900);
   color: white;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* Utilidades personalizadas */
@@ -87,97 +90,39 @@ body {
 
 /*misiones*/
 
-.bg-mission-primary { background-color: var(--mission-primary); }
-.text-mission-primary { color: var(--mission-primary); }
-.border-mission-primary { border-color: var(--mission-primary); }
+.bg-mission-primary {
+  background-color: var(--mission-primary);
+}
 
-.bg-mission-success { background-color: var(--mission-success); }
-.text-mission-success { color: var(--mission-success); }
-.border-mission-success { border-color: var(--mission-success); }
+.text-mission-primary {
+  color: var(--mission-primary);
+}
 
-.text-mission-reward { color: var(--mission-reward-text); }
-.border-mission-reward { border-color: var(--mission-reward-border); }
+.border-mission-primary {
+  border-color: var(--mission-primary);
+}
+
+.bg-mission-success {
+  background-color: var(--mission-success);
+}
+
+.text-mission-success {
+  color: var(--mission-success);
+}
+
+.border-mission-success {
+  border-color: var(--mission-success);
+}
+
+.text-mission-reward {
+  color: var(--mission-reward-text);
+}
+
+.border-mission-reward {
+  border-color: var(--mission-reward-border);
+}
 
 .shadow-mission {
   box-shadow: 0 0 6px var(--mission-primary),
-              0 0 8px var(--mission-success);
+    0 0 8px var(--mission-success);
 }
-/* ====== ARENA x MISSION THEME ====== */
-
-/* Contenedores principales */
-.mission-section {
-  background: var(--color-card);
-  border: 2px solid var(--grid, #2a2f3b);
-  border-radius: 12px;
-  padding: 1rem;
-  box-shadow: 0 0 0 2px #000 inset, 0 6px 0 0 #0003;
-}
-
-/* Cabeceras con “pixel vibe” */
-.mission-title {
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  text-shadow: 2px 2px 0 var(--pixel-shadow);
-}
-
-/* Badges/pills */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: .4rem;
-  padding: .25rem .5rem;
-  border: 2px solid #000;
-  border-radius: 8px;
-  font-size: .75rem;
-  line-height: 1rem;
-  background: #121826;
-}
-
-/* Paletas Mission */
-.badge--primary   { background: var(--mission-primary);   color: #fff; }
-.badge--success   { background: var(--mission-success);   color: #062f1b; }
-.badge--reward    { background: var(--mission-reward-text); color: #2e1700; border-color: var(--mission-reward-border); }
-.badge--outline   { background: transparent; border-color: var(--mission-primary); color: var(--mission-primary); }
-
-/* Paneles listados (habilidades / recompensas / log) */
-.mission-panel {
-  background: var(--color-card);
-  border: 2px solid var(--grid, #2a2f3b);
-  border-radius: 10px;
-  padding: .75rem;
-}
-
-/* Barra “pixel” (reutiliza la tuya pero con rojo por defecto) */
-.hpbar {
-  height: .75rem;
-  width: 100%;
-  border-radius: 6px;
-  overflow: hidden;
-  background: rgba(0,0,0,.35);
-  box-shadow: inset 0 0 0 2px #000;
-}
-.hpbar__fill {
-  height: 100%;
-  background: var(--color-outline-red); /* rojo por defecto */
-}
-
-/* Botones principales estilo Mission */
-.btn {
-  display: inline-flex;
-  align-items: center; justify-content: center;
-  gap: .5rem;
-  padding: .75rem 1.25rem;
-  border-radius: 12px;
-  border: 2px solid #000;
-  font-weight: 600;
-  letter-spacing: .4px;
-  box-shadow: 0 2px 0 #000;
-  transition: transform .05s ease, filter .15s ease;
-}
-.btn:active { transform: translateY(1px); }
-
-.btn--danger  { background: var(--color-outline-red);  color:#100; }
-.btn--success { background: var(--mission-success);    color:#062f1b; }
-.btn--venom   { background: #7c3aed;                  color:#fff; } /* púrpura */
-.btn--ghost   { background: #1f2430;                  color:#fff; }
-.btn[disabled]{ filter: grayscale(.35) brightness(.8); cursor: not-allowed; }

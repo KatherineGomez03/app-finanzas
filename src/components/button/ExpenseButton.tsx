@@ -42,25 +42,25 @@ export default function ExpenseButton({
   return (
     <>
       {/* BOTÓN TRIGGER PIXEL-ART */}
-      <div className="flex justify-center sm:justify-end items-start">
-  <button
-    onClick={() => setOpen(true)}
-    data-active={open}  // ← para pintar como activo cuando el modal está abierto
-    className={[
-      // mismo “chip” que los tabs
-      "h-8 px-3 py-1 text-xs font-medium leading-none",
-      "inline-flex items-center gap-2 rounded-none",
-      "border border-[var(--grid)] bg-[var(--surface)] text-[var(--text-primary)]",
-      // efectos
-      "hover:bg-[var(--color-card)] transition-colors duration-150",
-      // estado activo igual al tab seleccionado
-      "data-[active=true]:bg-[var(--mission-primary)] data-[active=true]:text-black data-[active=true]:border-white"
-    ].join(" ")}
-  >
-    <Plus className="h-3 w-3 -mt-px" />
-    Registrar Gasto
-  </button>
-</div>
+      <div className="flex justify-center sm:justify-end items-start bg-[var(--color-coin-dark)] border-white">
+        <button
+          onClick={() => setOpen(true)}
+          data-active={open}  // ← para pintar como activo cuando el modal está abierto
+          className={[
+            // mismo “chip” que los tabs
+            "h-8 px-3 py-1 text-xs font-medium leading-none",
+            "inline-flex items-center gap-2 rounded-none",
+            "border border-[var(--grid)] bg-[var(--surface)] text-[var(--text-primary)]",
+            // efectos
+            "hover:bg-[var(--color-card)] transition-colors duration-150",
+            // estado activo igual al tab seleccionado
+            "data-[active=true]:bg-[var(--mission-primary)] data-[active=true]:text-black data-[active=true]:border-white"
+          ].join(" ")}
+        >
+          <Plus className="h-3 w-3 -mt-px" />
+          Registrar Gasto
+        </button>
+      </div>
 
 
       {/* MODAL SIMPLE (sin librerías) */}
