@@ -1,116 +1,77 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import React, { useState } from "react";
 
-type TipsRequest = {
-  monthlyIncome?: number;
-  savingsGoal?: number;
-  currentSavings?: number;
-  daysLeft?: number;
-  expensesByCategory: Record<string, number>; // ej: { Alimentación: 1500, Transporte: 1000, ... }
+type AdviceAIProps = {
+  gastoMensual?: number;   // gasto total del mes (mock/front)
+  ahorroActual?: number;   // ahorro acumulado
+  meta?: number;           // objetivo de ahorro
 };
 
-type Tip = {
-  title: string;
-  body: string;
-  impact: "low" | "medium" | "high"; // severidad/impacto
-  category?: string;
-};
+export default function AdviceAI({
+  gastoMensual = 5000,
+  ahorroActual = 1350,
+  meta = 2000,
+}: AdviceAIProps) {
+  const [tips, setTips] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
 
-async function fetchTips(payload: TipsRequest): Promise<Tip[]> {
-  try {
-    const res = await fetch("/api/ai-tips", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    if (!res.ok) throw new Error("bad status");
-    const data = await res.json();
-    if (Array.isArray(data?.tips)) return data.tips as Tip[];
-    return [];
-  } catch {
-    return [];
-  }
-}
-
-export default function AdviceAI(props: TipsRequest) {
-  const [tips, setTips] = useState<Tip[] | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  // métrica simple para mostrar en la cabecera
-  const totalExpenses = useMemo(
-    () => Object.values(props.expensesByCategory || {}).reduce((a, b) => a + b, 0),
-    [props.expensesByCategory]
-  );
-
-  const load = async () => {
+  async function refetch() {
     setLoading(true);
-    const res = await fetchTips(props);
-    setTips(res);
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    try {
+      const res = await fetch("/api/ai-tips", { method: "POST" });
+      if (!res.ok) throw new Error("bad status");
+      const data = (await res.json()) as { tips?: string[] };
+      setTips(data.tips ?? []);
+    } catch {
+      // Fallback local mientras el endpoint no exista
+      setTips([
+        "Reservá un 10% de cada ingreso apenas lo recibas.",
+        "Dá de baja 2 suscripciones que no usás.",
+        "Poné un tope semanal para delivery y transporte.",
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
-    <section className="mission-section space-y-3">
-      <div className="flex items-center justify-between">
-        <div className="mission-title">🤖 IA de Consejos</div>
-        <div className="flex items-center gap-2">
-          <span className="badge">Gasto mensual: ${totalExpenses}</span>
-          {typeof props.savingsGoal === "number" && typeof props.currentSavings === "number" && (
-            <span className="badge badge--primary">
-              Meta: ${props.currentSavings} / ${props.savingsGoal}
-            </span>
-          )}
+    <section className="mission-section space-y-4">
+      {/* Encabezado */}
+      <div className="flex items-center gap-3">
+        <span className="badge badge-outline">🤖</span>
+        <h3 className="mission-title">IA de Consejos</h3>
+
+        <div className="ml-auto flex flex-wrap items-center gap-3">
+          <span className="badge">
+            Gasto mensual: ${gastoMensual.toLocaleString()}
+          </span>
+
+          <span className="badge badge-primary">
+            Meta: ${ahorroActual.toLocaleString()} / ${meta.toLocaleString()}
+          </span>
+
           <button
-            onClick={load}
-            className="btn btn--ghost"
+            onClick={refetch}
             disabled={loading}
+            className="badge"
             aria-label="Refrescar consejos"
           >
-            ⟳ Refrescar
+            ⟳ {loading ? "Cargando..." : "Refrescar"}
           </button>
         </div>
       </div>
 
+      {/* Caja de resultados */}
       <div className="mission-panel">
-        {loading && (
-          <div className="text-xs opacity-70">Generando recomendaciones…</div>
-        )}
-
-        {!loading && (!tips || tips.length === 0) && (
-          <div className="text-xs opacity-70">
+        {tips.length === 0 ? (
+          <div className="opacity-80">
             No hay recomendaciones por ahora. ¡Probá actualizar!
           </div>
-        )}
-
-        {!loading && tips && tips.length > 0 && (
-          <ul className="grid md:grid-cols-2 gap-3">
+        ) : (
+          <ul className="mission-list space-y-2 text-sm">
             {tips.map((t, i) => (
-              <li key={i} className="p-3 rounded border border-[var(--grid)] bg-[var(--color-card)]">
-                <div className="flex items-center justify-between mb-1">
-                  <div className="font-medium">{t.title}</div>
-                  <span
-                    className={
-                      t.impact === "high"
-                        ? "badge badge--danger"
-                        : t.impact === "medium"
-                        ? "badge badge--warning"
-                        : "badge badge--success"
-                    }
-                  >
-                    {t.impact === "high" ? "Alto" : t.impact === "medium" ? "Medio" : "Bajo"}
-                  </span>
-                </div>
-                {t.category && (
-                  <div className="text-[10px] opacity-60 mb-1">Categoría: {t.category}</div>
-                )}
-                <p className="text-sm">{t.body}</p>
-              </li>
+              <li key={i}>{t}</li>
             ))}
           </ul>
         )}
