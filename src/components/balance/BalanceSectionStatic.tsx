@@ -58,22 +58,48 @@ export default function BalanceSectionStatic({ current, previous }: Props) {
 
     const chartOptions = {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
-            legend: { position: "bottom" as const },
+            legend: {
+                position: "bottom" as const,
+                labels: {
+                    font: { size: 10 },
+                    padding: 12,
+                },
+            },
+        },
+        scales: {
+            x: {
+                ticks: {
+                    font: { size: 10 },
+                    maxRotation: 45,
+                    minRotation: 0,
+                },
+            },
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    font: { size: 10 },
+                    stepSize: 100,
+                },
+            },
         },
     };
 
+
     return (
-        <section className="max-w-md p-4 m-2 relative w-full rounded-lg shadow-lg border-2 rounded text-white">
+        <section className="w-full max-w-screen-lg mx-auto m-2 p-4 rounded-lg shadow-lg border border-2 text-white">
             <div className="flex items-center gap-2 mb-4">
                 <BarChart3 className="w-5 h-5 text-cyan-400" />
                 <h2 className="text-lg">Balance</h2>
             </div>
-            <div className="p-4 rounded-lg">
-                <div className="w-full mx-auto p-2 animate-fade-in">
-                    <Bar data={chartData} options={chartOptions} />
-                </div>
+
+            <div className="relative w-full h-[200px] md:h-[240px] lg:h-[280px]">
+                <Bar data={chartData} options={chartOptions} />
             </div>
+
+
         </section>
     );
 }
+
