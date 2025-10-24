@@ -11,6 +11,7 @@ import BalanceSection from "@/components/balance/BalanceSection";
 import { ChallengeSection } from "@/components/challenges/ChallengeSection";
 import ExpenseButton from "@/components/button/ExpenseButton";
 import { useUserStats } from '@/hooks/useUserStats'
+import { ShopContainer } from "@/components/shop/ShopContainer";
 
 function App() {
   const userData = {
@@ -84,6 +85,11 @@ function App() {
 
   console.log(stats)
 
+  const onBuyGlobal = (item: any) => {
+    console.log("Compra:", item.name, item.price);
+    window.alert(`Has comprado ${item.name} por ${item.price}`);
+  };
+
   return (
     <div className="mx-4 text-white">
       <Header {...stats} />
@@ -107,6 +113,12 @@ function App() {
       {tab === "arena" && (
         <div className="mx-auto max-w-5xl px-4">
           <ArenaSection />
+        </div>
+      )}
+
+      {tab === "tienda" && (
+        <div className="mx-auto max-w-5xl px-4">
+          <ShopContainer onBuyItem={onBuyGlobal} />
         </div>
       )}
 
