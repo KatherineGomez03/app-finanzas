@@ -1,10 +1,11 @@
 import { useState } from 'react'
-import { LogIn } from 'lucide-react'
+import { Eye, EyeOff, LogIn } from 'lucide-react'
 
 export const LoginForm = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -42,15 +43,28 @@ export const LoginForm = () => {
                 />
             </label>
 
-            <label className="flex flex-col gap-1">
+            <label className="flex flex-col gap-1 relative">
                 <span className="text-blue-300">CONTRASEÑA SECRETA</span>
-                <input
-                    type="password"
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    className="border border-blue-500 px-2 py-1 text-white"
-                    required
-                />
+                <div className="relative">
+                    <input
+                        type={showPassword ? "text" : "password"}
+                        value={password}
+                        onChange={e => setPassword(e.target.value)}
+                        className="border border-blue-500 px-2 py-1 pr-10 text-white w-full rounded"
+                        required
+                    />
+                    <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-blue-300 hover:text-blue-100"
+                    >
+                        {showPassword ? (
+                            <EyeOff className="w-5 h-5" />
+                        ) : (
+                            <Eye className="w-5 h-5" />
+                        )}
+                    </button>
+                </div>
             </label>
 
             {error && <p className="text-red-400 text-center">{error}</p>}
