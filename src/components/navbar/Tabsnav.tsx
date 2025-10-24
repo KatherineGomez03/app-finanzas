@@ -21,7 +21,7 @@ export default function Tabsnav() {
   return (
     <div className="flex items-center">
       {/* 🔹 NAVBAR (desktop) */}
-      <div className="hidden sm:flex flex-wrap gap-2 border border-[var(--grid)] px-2 py-1 rounded bg-[var(--surface)]">
+      <div className="hidden sm:flex flex-wrap gap-4 px-2 py-1 rounded bg-[var(--surface)]">
         {items.map(({ tab, label }) => {
           const href = tab === "panel" ? "/home" : `/home?tab=${tab}`;
           const isActive = active === tab;
