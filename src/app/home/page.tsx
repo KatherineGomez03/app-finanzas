@@ -93,17 +93,18 @@ function App() {
   };
 
   return (
-    <div className="mx-4 text-white text-white min-h-screen bg-[var(--back)] flex flex-col">
+    <div className="mx-4  text-white min-h-screen bg-[var(--back)] flex flex-col">
       <header className="fixed top-0 left-0 w-full z-50 bg-[var(--back)]">
         <div className="w-[80%] mx-auto">
           <Header {...stats} />
 
-          <nav className="w-full px-4 py-3 flex justify-between items-center flex-wrap gap-2 bg-[var(--back)]">
+          <nav className="w-full px-2 py-2 flex justify-center items-center flex-wrap gap-3 bg-[var(--back)]">
             <Tabsnav />
             <ExpenseButton/>
           </nav>
         </div>
       </header>
+
       <main className="flex-1 pt-[250px] sm:pt-[300px]">
         {tab === "misiones" && (
           <div className=" w-full mt-2 mb-6 responsive-grid">
