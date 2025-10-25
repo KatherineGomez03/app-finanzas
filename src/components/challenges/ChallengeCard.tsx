@@ -1,124 +1,79 @@
 "use client";
-import { useState, useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "./Card";
+import { useMemo } from "react";
+import { Gift, Plus, Trophy } from "lucide-react";
 import { Badge } from "./Badge";
 import { ProgressBar } from "./ProgressBar";
-import { Gift, Plus, Trophy } from "lucide-react";
-
-
+import { Button } from "./Button";
+import { useChallenge, Challenge } from "@/hooks/useChallenge";
 
 interface ChallengeCardProps {
-  id: number;
-  title: string;
-  description: string;
-  progress: number;
-  total: number;
-  reward: string;
-  status: "activo" | "completo";
-  icon: React.ElementType;
+  challenge: Challenge;
 }
 
-export function ChallengeCard({
-  id,
-  title,
-  description,
-  progress: initialProgress,
-  total,
-  reward,
-  status,
-  icon: Icon,
-}: ChallengeCardProps) {
-
-  const [progress, setProgress] = useState(initialProgress);
-
-
+export function ChallengeCard({ challenge }: ChallengeCardProps) {
+  const { incrementChallenge, loading } = useChallenge();
   const isComplete = useMemo(
-    () => progress >= total || status === "completo",
-    [progress, total, status]
+    () => challenge.count >= challenge.target || challenge.status === "completed",
+    [challenge]
   );
 
-
-  const handleAddProgress = () => {
-    if (isComplete) return;
-    setProgress((p) => Math.min(p + 1, total));
+  const handleClick = async () => {
+    if (isComplete || loading) return;
+    await incrementChallenge(challenge._id);
   };
 
   return (
-    <Card
-      className={[
-        "border-2 rounded-md shadow-pixel overflow-hidden",
-        isComplete ? "border-mission-success bg-card" : "border-mission-primary bg-card",
-      ].join(" ")}
+    <div
+      className={`border-2 rounded-md shadow-md p-3 ${
+        isComplete ? "border-green-500" : "border-blue-500"
+      }`}
     >
-      <CardHeader className={`pb-2 border-b ${
-          isComplete
-            ? "border-[var(--mission-success)]"
-            : "border-[var(--mission-primary)]"
+      <div className="flex justify-between items-center mb-2">
+        <h3
+          className={`font-bold text-sm ${
+            isComplete ? "text-green-400" : "text-blue-400"
           }`}
         >
-        <div className="flex items-start justify-between">
-          {/* icono y título */}
-          <div className="flex items-center gap-3">
-            <div
-              className={`p-2 border rounded-sm ${
-                isComplete ? "border-mission-success" : "border-mission-primary"
-              }`}
-            >
-              <Icon
-                className={`h-5 w-5 ${
-                  isComplete ? "text-mission-success" : "text-mission-primary"
-                }`}
-              />
-            </div>
-            <CardTitle
-              className={`${
-                isComplete ? "text-mission-success" : "text-mission-primary"
-              } text-xs md:text-sm tracking-wider`}
-            >
-              {title.toUpperCase()}
-            </CardTitle>
-          </div>
+          {challenge.name}
+        </h3>
+        {isComplete ? (
+          <Badge color="bg-green-600 flex items-center gap-1">
+            <Trophy className="w-3 h-3 inline-block" /> Completo
+          </Badge>
+        ) : (
+          <Badge color="bg-blue-600">
+            {challenge.count}/{challenge.target}
+          </Badge>
+        )}
+      </div>
 
-          {/* badges y botón */}
-          <div className="flex flex-col items-center gap-2">
-            {isComplete ? (
-              <Badge className="bg-mission-success border border-mission-success text-[10px] md:text-xs flex items-center gap-1 text-white">
-                <Trophy className="h-3 w-3" /> Completo
-              </Badge>
-            ) : (
-              <>
-                <Badge className="bg-mission-primary border border-mission-primary text-[10px] md:text-xs text-white">
-                  {progress}/{total}
-                </Badge>
+      <p className="text-xs text-white/80 mb-2">{challenge.description}</p>
 
-                <button
-                  onClick={handleAddProgress}
-                  aria-label="Añadir progreso"
-                  title="Añadir progreso"
-                  className="flex items-center justify-center w-full h-7 bg-mission-primary hover:bg-[#0fc9d8] border border-mission-primary rounded-sm text-white font-bold transition-transform duration-150 active:scale-95">
-                  <Plus className="h-4 w-4" />
-                </button>
-              </>
-            )}
-          </div>
+      <ProgressBar
+        current={challenge.count}
+        max={challenge.target}
+        color={isComplete ? "bg-green-500" : "bg-blue-500"}
+      />
+
+      <div className="flex justify-between items-center mt-3">
+        <div className="text-xs text-yellow-400 flex items-center gap-1">
+          <Gift className="w-3 h-3" />
+          {challenge.reward.coins} monedas + {challenge.reward.item}
         </div>
-
-        <p className="text-[10px] md:text-xs text-white/85 mt-2">{description}</p>
-      </CardHeader>
-
-
-      <CardContent className="space-y-3 pt-3">
 
         {!isComplete && (
-          <ProgressBar current={progress} max={total} color="bg-mission-success" />
+          <Button
+            onClick={handleClick}
+            disabled={loading}
+            variant="primary"
+            size="sm"
+            loading={loading}
+          >
+            <Plus className="w-3 h-3 inline-block mr-1" />
+            Progreso
+          </Button>
         )}
-
-        <div className="flex items-center justify-center gap-2 p-2 border-2 rounded-sm text-[11px] md:text-xs font-medium border-mission-reward text-mission-reward">
-          <Gift className="h-3 w-3 text-mission-reward" />
-          <span>Reward:</span>
-          <span>{reward}</span>
-        </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

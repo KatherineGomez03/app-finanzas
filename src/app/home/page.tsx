@@ -101,7 +101,7 @@ function App() {
         <div className="w-[80%] mx-auto">
           <Header {...stats} />
 
-          <nav className="w-full px-2 py-2 flex justify-center items-center gap-2 bg-[var(--back)]">
+          <nav className="w-full px-2 py-2 flex justify-center items-center flex-wrap gap-3 bg-[var(--back)]">
             <Tabsnav />
             <ExpenseButton />
             <LogoutButton/>
@@ -112,7 +112,7 @@ function App() {
       <main className="flex-1 pt-[300px] sm:pt-[300px]">
         {tab === "misiones" && (
           <div className="w-full mt-2 flex flex-col ">
-            <ChallengeSection />
+            <ChallengeSection/>
             
           </div>
         )}
@@ -136,7 +136,7 @@ function App() {
               {/* <BalanceSection userId={""}/> */}
               <TestBalanceStatic />
             </div>
-          
+
           </div>
         )}
       </main>

@@ -1,18 +1,18 @@
-interface ProgressBarProps {
+"use client";
+
+export function ProgressBar({
+  current,
+  max,
+  color = "bg-green-500",
+}: {
   current: number;
   max: number;
-  color?: string; 
-}
-
-export function ProgressBar({ current, max, color = "bg-green-500" }: ProgressBarProps) {
+  color?: string;
+}) {
   const percentage = Math.min((current / max) * 100, 100);
-
   return (
-    <div className="w-full h-3 bg-gray-800 rounded-sm overflow-hidden border border-gray-700">
-      <div
-        className={`h-full ${color} transition-all duration-300`}
-        style={{ width: `${percentage}%` }}
-      />
+    <div className="w-full h-2 bg-gray-700 rounded overflow-hidden">
+      <div className={`${color} h-full`} style={{ width: `${percentage}%` }} />
     </div>
   );
 }

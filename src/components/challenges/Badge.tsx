@@ -1,14 +1,15 @@
-//mostrar estados o categorías
-interface BadgeProps {
-  children: React.ReactNode;
-  color?: string; 
-  className?: string;
-}
+"use client";
 
-export function Badge({ children, color = "bg-blue-600", className = "" }: BadgeProps) {
+export function Badge({
+  children,
+  color = "bg-blue-600",
+}: {
+  children: React.ReactNode;
+  color?: string;
+}) {
   return (
     <span
-      className={`inline-flex items-center justify-center px-2 py-1 text-[10px] md:text-xs font-semibold text-white rounded-sm border ${color} ${className}`}
+      className={`px-2 py-1 rounded-sm text-[10px] font-semibold text-white ${color}`}
     >
       {children}
     </span>
