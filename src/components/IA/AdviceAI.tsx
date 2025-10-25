@@ -2,8 +2,9 @@
 
 import React, { useState } from "react";
 
+
 type AdviceAIProps = {
-  gastoMensual?: number;   // gasto total del mes (mock/front)
+  gastoMensual?: number;   // gasto total del mes mock/front
   ahorroActual?: number;   // ahorro acumulado
   meta?: number;           // objetivo de ahorro
 };
