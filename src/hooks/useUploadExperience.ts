@@ -1,9 +1,10 @@
 import { useState } from 'react';
+import { useUserUpdate } from "../context/UserUpdateContext"
 
 export function useUploadExperience() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<null | string>(null);
-
+    const { triggerUpdate } = useUserUpdate()
     const uploadExperience = async (experience: number) => {
         const userId = localStorage.getItem("userid");
         const token = localStorage.getItem('token')
@@ -29,7 +30,7 @@ export function useUploadExperience() {
             if (!res.ok) {
                 throw new Error(`Error ${res.status}: ${res.statusText}`);
             }
-
+            triggerUpdate()
             console.log(`Experiencia subida con éxito (+${experience} XP)`);
         } catch (err: any) {
             console.error('Falló la subida de experiencia:', err);
