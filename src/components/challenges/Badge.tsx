@@ -1,7 +1,7 @@
 //mostrar estados o categorías
 interface BadgeProps {
   children: React.ReactNode;
-  color?: string; // ejemplo: bg-green-600, bg-blue-600, etc.
+  color?: string; 
   className?: string;
 }
 

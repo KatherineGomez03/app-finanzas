@@ -11,6 +11,7 @@ const items = [
   { tab: "tienda", label: "Tienda" },
   { tab: "inventario", label: "Inventario" },
   { tab: "arena", label: "Arena" },
+  { tab: "Historial", label: "Historial" }
 ];
 
 export default function Tabsnav() {
@@ -20,8 +21,8 @@ export default function Tabsnav() {
 
   return (
     <div className="flex items-center">
-      {/* 🔹 NAVBAR (desktop) */}
-      <div className="hidden sm:flex flex-wrap gap-4 px-2 py-1 rounded bg-[var(--surface)]">
+      {/*desktop) */}
+      <div className="hidden sm:flex flex-wrap gap-2 px-2 py-1 rounded bg-[var(--surface)]">
         {items.map(({ tab, label }) => {
           const href = tab === "panel" ? "/home" : `/home?tab=${tab}`;
           const isActive = active === tab;
@@ -42,7 +43,7 @@ export default function Tabsnav() {
         })}
       </div>
 
-      {/* 🔹 BOTÓN MENÚ (mobile) */}
+      {/*cuando se hace mobile */}
       <button
         onClick={() => setOpen(!open)}
         className="sm:hidden border border-[var(--grid)] bg-[var(--surface)] text-[var(--text-primary)] hover:bg-[var(--color-card)] p-2 ml-2 rounded"
@@ -50,7 +51,6 @@ export default function Tabsnav() {
         {open ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
       </button>
 
-      {/* 🔹 MENÚ DESPLEGABLE (mobile) */}
       {open && (
         <>
           <div

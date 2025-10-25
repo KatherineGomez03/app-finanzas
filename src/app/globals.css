@@ -128,15 +128,12 @@ body {
     0 0 8px var(--mission-success);
 }
 
-/*personalizacion para el page*/
-.responsive-grid {
+.grid-misiones {
   display: grid;
-  gap: 1.5rem; /* equivale a gap-6 */
-  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   justify-content: center;
-  max-width: 80rem; /* equivale a max-w-6xl */
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 1rem; /* px-4 */
-  padding-right: 1rem;
+  padding: 1rem;
 }
+
+/*personalizacion para el page*/

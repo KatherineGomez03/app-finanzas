@@ -10,8 +10,11 @@ import TestBalanceStatic from "@/components/balance/TestBalanceStatic";
 import BalanceSection from "@/components/balance/BalanceSection";
 import { ChallengeSection } from "@/components/challenges/ChallengeSection";
 import ExpenseButton from "@/components/button/ExpenseButton";
+import LogoutButton from "@/components/button/LogoutButton";
 import { useUserStats } from "@/hooks/useUserStats";
 import { ShopContainer } from "@/components/shop/ShopContainer";
+
+
 
 function App() {
   const userData = {
@@ -98,39 +101,42 @@ function App() {
         <div className="w-[80%] mx-auto">
           <Header {...stats} />
 
-          <nav className="w-full px-2 py-2 flex justify-center items-center flex-wrap gap-3 bg-[var(--back)]">
+          <nav className="w-full px-2 py-2 flex justify-center items-center gap-2 bg-[var(--back)]">
             <Tabsnav />
-            <ExpenseButton/>
+            <ExpenseButton />
+            <LogoutButton/>
           </nav>
         </div>
       </header>
 
-      <main className="flex-1 pt-[250px] sm:pt-[300px]">
+      <main className="flex-1 pt-[300px] sm:pt-[300px]">
         {tab === "misiones" && (
-          <div className=" w-full mt-2 mb-6 responsive-grid">
+          <div className="w-full mt-2 flex flex-col ">
             <ChallengeSection />
+            
           </div>
         )}
 
         {tab === "arena" && (
-          <div className=" w-full mt-2 mb-6 responsive-grid">
+          <div className=" w-full mt-2 mb-6 ">
             <ArenaSection />
           </div>
         )}
 
         {tab === "tienda" && (
-          <div className="responsive-grid">
+          <div>
             <ShopContainer onBuyItem={onBuyGlobal} />
           </div>
         )}
 
-        
-
         {tab === "panel" && (
-          <div className="m-2 flex flex-col gap-2 md:flex-row md:justify-around ">
-            <PanelContainer />
-            {/* <BalanceSection userId={""}/> */}
-            <TestBalanceStatic />
+          <div>
+            <div className="m-2 flex flex-col gap-2 md:flex-row md:justify-around ">
+              <PanelContainer />
+              {/* <BalanceSection userId={""}/> */}
+              <TestBalanceStatic />
+            </div>
+          
           </div>
         )}
       </main>
