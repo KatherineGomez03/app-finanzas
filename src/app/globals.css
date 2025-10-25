@@ -131,12 +131,27 @@ body {
 /*personalizacion para el page*/
 .responsive-grid {
   display: grid;
-  gap: 1.5rem; /* equivale a gap-6 */
+  gap: 1.5rem;
+  /* equivale a gap-6 */
   grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
   justify-content: center;
-  max-width: 80rem; /* equivale a max-w-6xl */
+  max-width: 80rem;
+  /* equivale a max-w-6xl */
   margin-left: auto;
   margin-right: auto;
-  padding-left: 1rem; /* px-4 */
+  padding-left: 1rem;
+  /* px-4 */
   padding-right: 1rem;
+}
+
+.rarity-raro {
+  background-color: rgba(31, 223, 100, 0.4);
+  border-color: var(--mission-success);
+  color: white;
+}
+
+.rarity-legendario {
+  background-color: rgba(241, 143, 1, 0.4);
+  border-color: var(--color-coin-dark);
+  color: #fef08a;
 }

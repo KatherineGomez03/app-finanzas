@@ -3,10 +3,12 @@ import { ItemCardProps, Rarity, Category } from "./cosas/shop"
 import { Sword, Shield, Heart, Star } from "lucide-react";
 
 const rarityColors: Record<Rarity, string> = {
-  Común: "bg-gray-800 border-gray-600 text-gray-200",
-  Raro: "bg-purple-800 border-purple-600 text-purple-100",
-  Legendario: "bg-orange-600 border-orange-400 text-yellow-100",
+  Común: "bg-gray-800 border-gray-600 text-gray-200 bg-opacity-60",
+  Raro: "rarity-raro",
+  Legendario: "rarity-legendario",
 };
+
+
 
 const getCategoryIcon = (category: Category): JSX.Element => {
   switch (category) {
@@ -74,7 +76,7 @@ export const ItemCard: React.FC<ItemCardProps> = ({
 
         <button
           onClick={onBuy}
-          className="px-3 py-1 border-2 rounded-md font-bold text-[12px] bg-blue-700/80 hover:bg-blue-700/100"
+          className="px-3 py-1 border-2 rounded-md font-bold text-[12px] bg-blue-700/80 hover:bg-blue-700/100 text-white"
         >
           COMPRAR
         </button>
