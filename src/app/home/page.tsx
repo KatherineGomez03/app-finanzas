@@ -13,7 +13,8 @@ import ExpenseButton from "@/components/button/ExpenseButton";
 import LogoutButton from "@/components/button/LogoutButton";
 import { useUserStats } from "@/hooks/useUserStats";
 import { ShopContainer } from "@/components/shop/ShopContainer";
-
+import { ChallengeSectionActive } from "@/components/challenges/ChallengeSectionActive";
+import {ChallengeSectionCompleted } from "@/components/challenges/ChallengeSectionCompleted";
 
 
 function App() {
@@ -112,7 +113,8 @@ function App() {
       <main className="flex-1 pt-[300px] sm:pt-[300px]">
         {tab === "misiones" && (
           <div className="w-full mt-2 flex flex-col ">
-            <ChallengeSection/>
+            <ChallengeSectionActive/>
+            <ChallengeSectionCompleted/>
             
           </div>
         )}
@@ -136,6 +138,7 @@ function App() {
               {/* <BalanceSection userId={""}/> */}
               <TestBalanceStatic />
             </div>
+            <ChallengeSectionActive/>
 
           </div>
         )}
