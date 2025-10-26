@@ -32,7 +32,7 @@ export default function ExpenseButton() {
 
     // Feedback RPG
     setRpgMessage(`-${amount} oro gastado en ${category} 💰`);
-    setTimeout(() => setRpgMessage(""), 2000);
+    setTimeout(() => setRpgMessage(""), 3000);
 
     // Reset form
     setOpen(false);
