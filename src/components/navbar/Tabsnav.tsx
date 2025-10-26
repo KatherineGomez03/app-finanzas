@@ -11,7 +11,7 @@ const items = [
   { tab: "tienda", label: "Tienda" },
   { tab: "inventario", label: "Inventario" },
   { tab: "arena", label: "Arena" },
-  { tab: "Historial", label: "Historial" }
+  { tab: "historial", label: "Historial" }
 ];
 
 export default function Tabsnav() {

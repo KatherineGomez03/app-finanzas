@@ -18,6 +18,8 @@ import { useUserStats } from "@/hooks/useUserStats";
 import { ShopContainer } from "@/components/shop/ShopContainer";
 import { ChallengeSectionActive } from "@/components/challenges/ChallengeSectionActive";
 import { ChallengeSectionCompleted } from "@/components/challenges/ChallengeSectionCompleted";
+import HistorySection from "@/components/expenses/ExpenseHistory";
+import ExpenseHistory from "@/components/expenses/ExpenseHistory";
 
 function App() {
   const userData = {
@@ -92,13 +94,10 @@ function App() {
   return (
     <div className="mx-4  text-white min-h-screen bg-[var(--back)] flex flex-col">
       <header className="fixed top-0 left-0 w-full z-50 bg-[var(--back)]">
-        <div className="w-[80%] mx-auto flex flex-col items-center">
+        <div className="w-[80%] mx-auto">
           <Header {...stats} />
 
-          <nav
-            className="w-full px-2 py-2 flex justify-center items-center gap-2 sm:gap-3 
-                 flex-nowrap bg-[var(--back)] overflow-x-auto scrollbar-hide"
-          >
+          <nav className="w-full px-2 py-2 flex justify-center items-center flex-wrap gap-3 bg-[var(--back)]">
             <Tabsnav />
             <ExpenseButton />
             <LogoutButton />
@@ -117,6 +116,11 @@ function App() {
         {tab === "arena" && (
           <div className="w-full mt-2 mb-6 ">
             <ArenaSection />
+          </div>
+        )}
+        {tab === "historial" && (
+          <div className="w-full mt-2 mb-6 ">
+            <ExpenseHistory />
           </div>
         )}
 
