@@ -92,10 +92,13 @@ function App() {
   return (
     <div className="mx-4  text-white min-h-screen bg-[var(--back)] flex flex-col">
       <header className="fixed top-0 left-0 w-full z-50 bg-[var(--back)]">
-        <div className="w-[80%] mx-auto">
+        <div className="w-[80%] mx-auto flex flex-col items-center">
           <Header {...stats} />
 
-          <nav className="w-full px-2 py-2 flex justify-center items-center flex-wrap gap-3 bg-[var(--back)]">
+          <nav
+            className="w-full px-2 py-2 flex justify-center items-center gap-2 sm:gap-3 
+                 flex-nowrap bg-[var(--back)] overflow-x-auto scrollbar-hide"
+          >
             <Tabsnav />
             <ExpenseButton />
             <LogoutButton />

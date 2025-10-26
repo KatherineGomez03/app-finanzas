@@ -8,7 +8,6 @@ export default function LogoutButton() {
       localStorage.removeItem("token");
       localStorage.removeItem("userid");
       localStorage.clear();
-
       window.location.href = "http://localhost:3001/login";
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
@@ -19,13 +18,15 @@ export default function LogoutButton() {
     <button
       onClick={handleLogout}
       title="Salir del Reino"
-      className="h-8 w-8 flex items-center justify-center bg-[var(--color-navy)]
-                 text-yellow-300 border border-yellow-500
+      className="flex items-center justify-center gap-1 px-2 h-8 sm:h-9
+                 bg-[var(--color-navy)] text-yellow-300 border border-yellow-500
                  hover:bg-red-600 hover:border-red-500 hover:text-white
-                 transition-all duration-150 font-['PressStart2P'] text-[10px]
-                 rounded-none shadow-[1px_1px_0_#000]"
+                 active:translate-y-[1px] transition-all duration-150
+                 font-['PressStart2P'] text-[8px] sm:text-[9px]
+                 rounded-sm shadow-[1px_1px_0_#000]"
     >
-      <LogOut className="h-4 w-4" />
+      <LogOut className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+      <span className="hidden sm:inline">Salir</span>
     </button>
   );
 }

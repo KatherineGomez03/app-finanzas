@@ -1,9 +1,8 @@
 "use client";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Gift, Plus, Trophy } from "lucide-react";
 import { Badge } from "./Badge";
 import { ProgressBar } from "./ProgressBar";
-import { Button } from "./Button";
 import { useChallenge, Challenge } from "@/hooks/useChallenge";
 
 interface ChallengeCardProps {
@@ -13,72 +12,107 @@ interface ChallengeCardProps {
 export function ChallengeCard({ challenge }: ChallengeCardProps) {
   const { incrementChallenge, loading } = useChallenge();
 
-  // calcular si está completo 
+  const [localChallenge, setLocalChallenge] = useState(challenge);
+
   const isComplete = useMemo(() => {
-    const count = Number(challenge.count ?? 0);
-    const target = Number(challenge.target ?? 1);
+    const count = Number(localChallenge.count ?? 0);
+    const target = Number(localChallenge.target ?? 1);
     return target > 0 && count >= target;
-  }, [challenge]);
+  }, [localChallenge]);
 
   const handleClick = async () => {
     if (isComplete || loading) return;
-    await incrementChallenge(challenge._id);
+
+    await incrementChallenge(localChallenge._id);
+
+    // actualizar localmente sin recargar
+    setLocalChallenge((prev) => ({
+      ...prev,
+      count: Math.min((prev.count ?? 0) + 1, prev.target),
+    }));
   };
 
   return (
     <div
-      className={`border-2 rounded-md shadow-md p-3 transition-all duration-200 ${
+      className={`relative border-2 rounded-md shadow-[0_0_12px_rgba(0,255,255,0.2)] p-4 
+      text-[13px] leading-tight
+      bg-[var(--color-card)] min-h-[240px] flex flex-col justify-between 
+      transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_16px_rgba(0,255,255,0.4)]
+      ${
         isComplete
-          ? "border-green-500 bg-green-900/20"
-          : "border-blue-500 bg-blue-900/20"
+          ? "border-mission-success"
+          : "border-mission-primary"
       }`}
     >
-      <div className="flex justify-between items-center mb-2">
+      <div className="flex justify-between items-start">
         <h3
-          className={`font-bold text-sm ${
-            isComplete ? "text-green-400" : "text-blue-400"
+          className={`font-bold text-sm leading-tight tracking-wide ${
+            isComplete ? "text-mission-success" : "text-mission-primary"
           }`}
         >
-          {challenge.name}
+          {localChallenge.name}
         </h3>
 
-        {isComplete ? (
-          <Badge color="bg-green-600 flex items-center gap-1">
-            <Trophy className="w-3 h-3 inline-block" /> Completo
-          </Badge>
-        ) : (
-          <Badge color="bg-blue-600">
-            {challenge.count}/{challenge.target}
-          </Badge>
-        )}
+        <div className="flex flex-col items-center gap-2">
+          {isComplete ? (
+            <Badge color="bg-mission-success flex items-center gap-1 text-[11px] px-2 py-[2px]">
+              <Trophy className="w-3 h-3 inline-block" /> Completo
+            </Badge>
+          ) : (
+            <>
+              <div
+                className="w-[90px] text-center text-[10px] font-bold 
+                bg-gradient-to-b from-cyan-400 to-cyan-500 text-black
+                border-[2px] border-white rounded-sm 
+                shadow-[2px_2px_0_#000] select-none"
+              >
+                {localChallenge.count}/{localChallenge.target}
+              </div>
+
+              <button
+                onClick={handleClick}
+                disabled={loading}
+                className={`w-[90px] h-[28px] font-bold text-[9px] uppercase tracking-wide
+                border-[2px] border-white rounded-sm
+                shadow-[2px_2px_0_#000] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]
+                transition-all duration-100 select-none
+                ${
+                  loading
+                    ? "bg-gray-400 text-gray-800 cursor-not-allowed"
+                    : "bg-gradient-to-b from-blue-500 to-blue-600 text-white hover:brightness-110"
+                }`}
+              >
+                <Plus className="w-3 h-3 inline-block mr-1" />
+                Progreso
+              </button>
+            </>
+          )}
+        </div>
       </div>
 
-      <p className="text-xs text-white/80 mb-2">{challenge.description}</p>
+      <div className="my-2 h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent rounded-sm"></div>
 
+      {/* descripcion*/}
+      <p className="text-white/90 text-[12px] mb-2 leading-snug text-justify">
+        {localChallenge.description}
+      </p>
+
+      {/*progreso*/}
       <ProgressBar
-        current={challenge.count}
-        max={challenge.target}
-        color={isComplete ? "bg-green-500" : "bg-blue-500"}
+        current={localChallenge.count}
+        max={localChallenge.target}
+        color={isComplete ? "bg-mission-success" : "bg-mission-primary"}
       />
 
-      <div className="flex justify-between items-center mt-3">
-        <div className="text-xs text-yellow-400 flex items-center gap-1">
-          <Gift className="w-3 h-3" />
-          {challenge.reward.coins} monedas + {challenge.reward.item}
-        </div>
-
-        {!isComplete && (
-          <Button
-            onClick={handleClick}
-            disabled={loading}
-            variant="primary"
-            size="sm"
-            loading={loading}
-          >
-            <Plus className="w-3 h-3 inline-block mr-1" />
-            Progreso
-          </Button>
-        )}
+      {/*recompensa*/}
+      <div
+        className="mt-3 border-2 border-yellow-400/70 rounded-md p-2 bg-yellow-400/5
+        flex items-center gap-2 text-yellow-400 text-[12px] font-semibold shadow-[1px_1px_0_#000_inset]"
+      >
+        <Gift className="w-4 h-4 text-yellow-400" />
+        <span>
+          {localChallenge.reward.coins} monedas + {localChallenge.reward.item}
+        </span>
       </div>
     </div>
   );
