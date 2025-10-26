@@ -135,7 +135,8 @@ body {
   justify-content: center;
   padding: 1rem;
 }
-/*personalizacion para el page*/
+
+/*inventory and ia*/
 .mission-section {
   background: var(--color-card);
   border: 2px solid var(--grid);
@@ -171,7 +172,6 @@ body {
   border-color: var(--mission-reward-border);
 }
 
-/*inventory and ia*/
 .hpbar {
   height: 10px;
   width: 100%;
@@ -186,22 +186,6 @@ body {
   background: #ef4444;
 }
 
-/*personalizacion para el page*/
-.responsive-grid {
-  display: grid;
-  gap: 1.5rem;
-  /* equivale a gap-6 */
-  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-  justify-content: center;
-  max-width: 80rem;
-  /* equivale a max-w-6xl */
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 1rem;
-  /* px-4 */
-  padding-right: 1rem;
-}
-
 .rarity-raro {
   background-color: rgba(31, 223, 100, 0.4);
   border-color: var(--mission-success);
@@ -213,3 +197,5 @@ body {
   border-color: var(--color-coin-dark);
   color: #fef08a;
 }
+
+/*personalizacion para el page*/
