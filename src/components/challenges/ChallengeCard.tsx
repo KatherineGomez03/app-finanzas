@@ -1,124 +1,119 @@
 "use client";
-import { useState, useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "./Card";
+import { useMemo, useState } from "react";
+import { Gift, Plus, Trophy } from "lucide-react";
 import { Badge } from "./Badge";
 import { ProgressBar } from "./ProgressBar";
-import { Gift, Plus, Trophy } from "lucide-react";
-
-
+import { useChallenge, Challenge } from "@/hooks/useChallenge";
 
 interface ChallengeCardProps {
-  id: number;
-  title: string;
-  description: string;
-  progress: number;
-  total: number;
-  reward: string;
-  status: "activo" | "completo";
-  icon: React.ElementType;
+  challenge: Challenge;
 }
 
-export function ChallengeCard({
-  id,
-  title,
-  description,
-  progress: initialProgress,
-  total,
-  reward,
-  status,
-  icon: Icon,
-}: ChallengeCardProps) {
+export function ChallengeCard({ challenge }: ChallengeCardProps) {
+  const { incrementChallenge, loading } = useChallenge();
 
-  const [progress, setProgress] = useState(initialProgress);
+  const [localChallenge, setLocalChallenge] = useState(challenge);
 
+  const isComplete = useMemo(() => {
+    const count = Number(localChallenge.count ?? 0);
+    const target = Number(localChallenge.target ?? 1);
+    return target > 0 && count >= target;
+  }, [localChallenge]);
 
-  const isComplete = useMemo(
-    () => progress >= total || status === "completo",
-    [progress, total, status]
-  );
+  const handleClick = async () => {
+    if (isComplete || loading) return;
 
+    await incrementChallenge(localChallenge._id);
 
-  const handleAddProgress = () => {
-    if (isComplete) return;
-    setProgress((p) => Math.min(p + 1, total));
+    // actualizar localmente sin recargar
+    setLocalChallenge((prev) => ({
+      ...prev,
+      count: Math.min((prev.count ?? 0) + 1, prev.target),
+    }));
   };
 
   return (
-    <Card
-      className={[
-        "border-2 rounded-md shadow-pixel overflow-hidden",
-        isComplete ? "border-mission-success bg-card" : "border-mission-primary bg-card",
-      ].join(" ")}
+    <div
+      className={`relative border-2 rounded-md shadow-[0_0_12px_rgba(0,255,255,0.2)] p-4 
+      text-[13px] leading-tight
+      bg-[var(--color-card)] min-h-[240px] flex flex-col justify-between 
+      transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_16px_rgba(0,255,255,0.4)]
+      ${
+        isComplete
+          ? "border-mission-success"
+          : "border-mission-primary"
+      }`}
     >
-      <CardHeader className={`pb-2 border-b ${
-          isComplete
-            ? "border-[var(--mission-success)]"
-            : "border-[var(--mission-primary)]"
+      <div className="flex justify-between items-start">
+        <h3
+          className={`font-bold text-sm leading-tight tracking-wide ${
+            isComplete ? "text-mission-success" : "text-mission-primary"
           }`}
         >
-        <div className="flex items-start justify-between">
-          {/* icono y título */}
-          <div className="flex items-center gap-3">
-            <div
-              className={`p-2 border rounded-sm ${
-                isComplete ? "border-mission-success" : "border-mission-primary"
-              }`}
-            >
-              <Icon
-                className={`h-5 w-5 ${
-                  isComplete ? "text-mission-success" : "text-mission-primary"
+          {localChallenge.name}
+        </h3>
+
+        <div className="flex flex-col items-center gap-2">
+          {isComplete ? (
+            <Badge color="bg-mission-success flex items-center gap-1 text-[11px] px-2 py-[2px]">
+              <Trophy className="w-3 h-3 inline-block" /> Completo
+            </Badge>
+          ) : (
+            <>
+              <div
+                className="w-[90px] text-center text-[10px] font-bold 
+                bg-gradient-to-b from-cyan-400 to-cyan-500 text-black
+                border-[2px] border-white rounded-sm 
+                shadow-[2px_2px_0_#000] select-none"
+              >
+                {localChallenge.count}/{localChallenge.target}
+              </div>
+
+              <button
+                onClick={handleClick}
+                disabled={loading}
+                className={`w-[90px] h-[28px] font-bold text-[9px] uppercase tracking-wide
+                border-[2px] border-white rounded-sm
+                shadow-[2px_2px_0_#000] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]
+                transition-all duration-100 select-none
+                ${
+                  loading
+                    ? "bg-gray-400 text-gray-800 cursor-not-allowed"
+                    : "bg-gradient-to-b from-blue-500 to-blue-600 text-white hover:brightness-110"
                 }`}
-              />
-            </div>
-            <CardTitle
-              className={`${
-                isComplete ? "text-mission-success" : "text-mission-primary"
-              } text-xs md:text-sm tracking-wider`}
-            >
-              {title.toUpperCase()}
-            </CardTitle>
-          </div>
-
-          {/* badges y botón */}
-          <div className="flex flex-col items-center gap-2">
-            {isComplete ? (
-              <Badge className="bg-mission-success border border-mission-success text-[10px] md:text-xs flex items-center gap-1 text-white">
-                <Trophy className="h-3 w-3" /> Completo
-              </Badge>
-            ) : (
-              <>
-                <Badge className="bg-mission-primary border border-mission-primary text-[10px] md:text-xs text-white">
-                  {progress}/{total}
-                </Badge>
-
-                <button
-                  onClick={handleAddProgress}
-                  aria-label="Añadir progreso"
-                  title="Añadir progreso"
-                  className="flex items-center justify-center w-full h-7 bg-mission-primary hover:bg-[#0fc9d8] border border-mission-primary rounded-sm text-white font-bold transition-transform duration-150 active:scale-95">
-                  <Plus className="h-4 w-4" />
-                </button>
-              </>
-            )}
-          </div>
+              >
+                <Plus className="w-3 h-3 inline-block mr-1" />
+                Progreso
+              </button>
+            </>
+          )}
         </div>
+      </div>
 
-        <p className="text-[10px] md:text-xs text-white/85 mt-2">{description}</p>
-      </CardHeader>
+      <div className="my-2 h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent rounded-sm"></div>
 
+      {/* descripcion*/}
+      <p className="text-white/90 text-[12px] mb-2 leading-snug text-justify">
+        {localChallenge.description}
+      </p>
 
-      <CardContent className="space-y-3 pt-3">
+      {/*progreso*/}
+      <ProgressBar
+        current={localChallenge.count}
+        max={localChallenge.target}
+        color={isComplete ? "bg-mission-success" : "bg-mission-primary"}
+      />
 
-        {!isComplete && (
-          <ProgressBar current={progress} max={total} color="bg-mission-success" />
-        )}
-
-        <div className="flex items-center justify-center gap-2 p-2 border-2 rounded-sm text-[11px] md:text-xs font-medium border-mission-reward text-mission-reward">
-          <Gift className="h-3 w-3 text-mission-reward" />
-          <span>Reward:</span>
-          <span>{reward}</span>
-        </div>
-      </CardContent>
-    </Card>
+      {/*recompensa*/}
+      <div
+        className="mt-3 border-2 border-yellow-400/70 rounded-md p-2 bg-yellow-400/5
+        flex items-center gap-2 text-yellow-400 text-[12px] font-semibold shadow-[1px_1px_0_#000_inset]"
+      >
+        <Gift className="w-4 h-4 text-yellow-400" />
+        <span>
+          {localChallenge.reward.coins} monedas + {localChallenge.reward.item}
+        </span>
+      </div>
+    </div>
   );
 }

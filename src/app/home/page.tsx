@@ -11,11 +11,15 @@ import TestBalanceStatic from "@/components/balance/TestBalanceStatic";
 import BalanceSection from "@/components/balance/BalanceSection";
 import { ChallengeSection } from "@/components/challenges/ChallengeSection";
 import ExpenseButton from "@/components/button/ExpenseButton";
+import LogoutButton from "@/components/button/LogoutButton";
 import AdviceAI from "@/components/IA/AdviceAI";
 import InventoryPage from "@/components/inventory/InventoryPage";
-
 import { useUserStats } from "@/hooks/useUserStats";
 import { ShopContainer } from "@/components/shop/ShopContainer";
+import { ChallengeSectionActive } from "@/components/challenges/ChallengeSectionActive";
+import { ChallengeSectionCompleted } from "@/components/challenges/ChallengeSectionCompleted";
+import HistorySection from "@/components/expenses/ExpenseHistory";
+import ExpenseHistory from "@/components/expenses/ExpenseHistory";
 
 function App() {
   const userData = {
@@ -34,7 +38,6 @@ function App() {
   const sp = useSearchParams();
   const tab = (sp.get("tab") ?? "panel").toLowerCase();
 
-
   const mockSavings = {
     current: 1350,
     goal: 2000,
@@ -45,14 +48,23 @@ function App() {
   const mockData = {
     month: "Octubre",
     categories: [
-      { category: "Alimentación", current: 1500, previous: 1300, color: "green" },
+      {
+        category: "Alimentación",
+        current: 1500,
+        previous: 1300,
+        color: "green",
+      },
       { category: "Transporte", current: 1000, previous: 1200, color: "red" },
-      { category: "Entretenimiento", current: 750, previous: 500, color: "yellow" },
+      {
+        category: "Entretenimiento",
+        current: 750,
+        previous: 500,
+        color: "yellow",
+      },
       { category: "Servicios", current: 1250, previous: 1100, color: "red" },
       { category: "Otros", current: 500, previous: 600, color: "yellow" },
     ],
   };
-
 
   // Gasto por categoría esto lo converti a objeto para AdviceAI
   const mockExpenses = [
@@ -88,35 +100,41 @@ function App() {
           <nav className="w-full px-2 py-2 flex justify-center items-center flex-wrap gap-3 bg-[var(--back)]">
             <Tabsnav />
             <ExpenseButton />
+            <LogoutButton />
           </nav>
         </div>
       </header>
 
-      <main className="flex-1 pt-[250px] sm:pt-[300px]">
+      <main className="flex-1 pt-[300px] sm:pt-[300px]">
         {tab === "misiones" && (
-          <div className="w-full mt-2 mb-6 responsive-grid">
-            <ChallengeSection />
+          <div className="w-full mt-2 mb-6 ">
+            <ChallengeSectionActive />
+            <ChallengeSectionCompleted />
           </div>
         )}
 
         {tab === "arena" && (
-          <div className="w-full mt-2 mb-6 responsive-grid">
+          <div className="w-full mt-2 mb-6 ">
             <ArenaSection />
+          </div>
+        )}
+        {tab === "historial" && (
+          <div className="w-full mt-2 mb-6 ">
+            <ExpenseHistory />
           </div>
         )}
 
         {tab === "tienda" && (
-          <div className="w-full mt-2 mb-6 responsive-grid">
+          <div className="w-full mt-2 mb-6 ">
             <ShopContainer onBuyItem={onBuyGlobal} />
           </div>
         )}
 
         {tab === "inventario" && (
-          <div className="w-full mt-2 mb-6 responsive-grid">
-            < InventoryPage />
+          <div className="w-full mt-2 mb-6 ">
+            <InventoryPage />
           </div>
         )}
-
 
         {tab === "panel" && (
           <div>
@@ -128,6 +146,7 @@ function App() {
             <div className="mx-auto max-w-5xl px-4 mt-6">
               <AdviceAI />
             </div>
+            <ChallengeSectionActive />
           </div>
         )}
       </main>
