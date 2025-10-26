@@ -11,6 +11,11 @@ export function ChallengeSection() {
   useEffect(() => {
     fetchChallenges();
   }, [fetchChallenges]);
+  console.log("🔍 Desafíos detallados:");
+challenges.forEach((c) => {
+  console.log(`${c.name}: ${c.count}/${c.target} → ${c.status}`);
+});
+
 
   if (loading && challenges.length === 0)
     return <p className="text-center text-white">Cargando desafíos...</p>;
