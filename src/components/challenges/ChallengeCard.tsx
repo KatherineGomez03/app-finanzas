@@ -12,14 +12,14 @@ interface ChallengeCardProps {
 
 export function ChallengeCard({ challenge }: ChallengeCardProps) {
   const { incrementChallenge, loading } = useChallenge();
-  const isComplete = useMemo(() => {
-    const count = Number(challenge.count ?? 0);
-const target = Number(challenge.target ?? 1);
-const status = challenge.status?.toLowerCase?.() ?? "active";
-
-return (target > 0 && count >= target) || status === "completed";
-
+const isComplete = useMemo(() => {
+  const count = Number(challenge.count ?? 0);
+  const target = Number(challenge.target ?? 1);
+  return target > 0 && count >= target;
 }, [challenge]);
+
+
+  
 
   const handleClick = async () => {
     if (isComplete || loading) return;

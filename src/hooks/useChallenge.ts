@@ -1,7 +1,7 @@
 "use client";
 import { useState, useCallback } from "react";
 
-/* Tipo Challenge */
+/* Tipo interno */
 export interface Challenge {
   _id: string;
   name: string;
@@ -17,7 +17,7 @@ export interface Challenge {
   updatedAt: string;
 }
 
-/* Hook principal */
+/* Hook */
 export function useChallenge() {
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [loading, setLoading] = useState(false);
@@ -47,7 +47,7 @@ export function useChallenge() {
     }
   }, [API_URL]);
 
-  // 🔹 Incrementar progreso
+  // 🔹 Incrementar progreso individual
   const incrementChallenge = useCallback(
     async (id: string) => {
       try {
@@ -75,5 +75,40 @@ export function useChallenge() {
     [API_URL]
   );
 
-  return { challenges, loading, error, fetchChallenges, incrementChallenge };
+  // 🔹 Reiniciar TODOS los desafíos (nuevo)
+  const resetAllChallenges = useCallback(async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Token no encontrado");
+
+      const res = await fetch(`${API_URL}/challenges/reset`, {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!res.ok) throw new Error("Error al reiniciar desafíos");
+
+      const data = await res.json();
+      console.log("🔄", data.message);
+
+      // Vuelve a cargar todos los desafíos actualizados
+      await fetchChallenges();
+    } catch (err) {
+      console.error("❌ Error al reiniciar desafíos:", err);
+      setError(err as Error);
+    } finally {
+      setLoading(false);
+    }
+  }, [API_URL, fetchChallenges]);
+
+  // 🔹 Exportar funciones
+  return {
+    challenges,
+    loading,
+    error,
+    fetchChallenges,
+    incrementChallenge,
+    resetAllChallenges, // 👈 nuevo export
+  };
 }

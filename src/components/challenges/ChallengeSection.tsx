@@ -12,19 +12,26 @@ export function ChallengeSection() {
     fetchChallenges();
   }, [fetchChallenges]);
   console.log("🔍 Desafíos detallados:");
-challenges.forEach((c) => {
-  console.log(`${c.name}: ${c.count}/${c.target} → ${c.status}`);
-});
-
+  challenges.forEach((c) => {
+    console.log(`${c.name}: ${c.count}/${c.target} → ${c.status}`);
+  });
 
   if (loading && challenges.length === 0)
     return <p className="text-center text-white">Cargando desafíos...</p>;
 
-  if (error)
-    return <p className="text-center text-red-500">{error.message}</p>;
+  if (error) return <p className="text-center text-red-500">{error.message}</p>;
 
-  const active = challenges.filter((c) => c.status === "active");
-  const completed = challenges.filter((c) => c.status === "completed");
+const completed = challenges.filter((c) => {
+  const count = Number(c.count ?? 0);
+  const target = Number(c.target ?? 1);
+  return target > 0 && count >= target;
+});
+
+const active = challenges.filter((c) => {
+  const count = Number(c.count ?? 0);
+  const target = Number(c.target ?? 1);
+  return target === 0 || count < target;
+});
 
   return (
     <div className="space-y-6 px-2 md:px-4 py-4">
