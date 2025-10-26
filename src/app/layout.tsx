@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 
+import { UserUpdateProvider } from "../context/UserUpdateContext"
+
 // Tipografía retro pixelada
 const pressStart = localFont({
   src: "../../public/fonts/PressStart2P.ttf",
@@ -41,7 +43,9 @@ export default function RootLayout({
           bg-black text-green-400 font-press-start antialiased
         `}
       >
-        {children}
+        <UserUpdateProvider>
+          {children}
+        </UserUpdateProvider>
       </body>
     </html>
   );

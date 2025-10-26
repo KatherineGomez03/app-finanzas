@@ -22,7 +22,7 @@ export const PanelContainer = () => {
                     <Donut data={mockExpenses} />
                 </div>
 
-                <div className="w-full m-4">
+                <div className="w-full m-4 px-2">
                     {mockExpenses.map((item, index) => (
                         <LegendItem
                             key={index}
@@ -32,6 +32,7 @@ export const PanelContainer = () => {
                         />
                     ))}
                 </div>
+
             </section>
         </div>
     );

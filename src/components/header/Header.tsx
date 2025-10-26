@@ -1,7 +1,7 @@
 import { StatBox } from './StatBox'
 import { ProgressBar } from './ProgressBar'
 
-interface HeaderProps {
+export interface HeaderProps {
     username: string
     level: number
     health: number // valor actual
