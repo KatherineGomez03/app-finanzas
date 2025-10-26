@@ -1,15 +1,9 @@
 "use client";
-import { useEffect, useState } from "react";
 import { Wallet, Calendar, ShoppingBag } from "lucide-react";
+import { useEffect } from "react";
+import { useHistory } from "@/hooks/useHistory";
 
-interface Expense {
-  id: string;
-  amount: number;
-  category: string;
-  description: string;
-  date: string;
-}
-
+// 🔹 Mapa de categorías traducidas y coloreadas
 const categoryMap: Record<string, { color: string; label: string }> = {
   alimentacion: { color: "category-alimentacion", label: "Alimentación" },
   food: { color: "category-alimentacion", label: "Alimentación" },
@@ -39,28 +33,56 @@ const categoryMap: Record<string, { color: string; label: string }> = {
   shopping: { color: "category-otros", label: "Compras" },
 };
 
+// 🔹 Función auxiliar para obtener info de categoría
 export const getCategoryInfo = (category: string) => {
-  const cat = category.toLowerCase();
+  const cat = category?.toLowerCase?.() ?? "";
   return categoryMap[cat] || { color: "category-otros", label: "Otros" };
 };
 
 export default function ExpenseHistory() {
-  const [expenses, setExpenses] = useState<Expense[]>([]);
+  // ✅ Hook real que obtiene el historial
+  const { history, loading, error, refetch } = useHistory();
 
-  const loadExpenses = () => {
-    const stored = JSON.parse(localStorage.getItem("expenses") || "[]");
-    setExpenses(stored.reverse());
-  };
-
+  // recargar si cambia algo
   useEffect(() => {
-    loadExpenses();
-    const interval = setInterval(() => {
-      const lastUpdate = localStorage.getItem("lastExpenseUpdate");
-      if (lastUpdate) loadExpenses();
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
+    refetch?.();
+  }, [refetch]);
 
+  // 🔹 Mostrar estados de carga o error
+  if (loading)
+    return (
+      <p className="text-center text-white mt-8">
+        ⏳ Cargando historial de gastos...
+      </p>
+    );
+
+  if (error)
+    return (
+      <p className="text-center text-red-400 mt-8">
+        ⚠️ Error al cargar gastos: {error}
+      </p>
+    );
+
+  // 🔹 Si no hay gastos
+  if (!history || history.length === 0) {
+    return (
+      <section className="w-full max-w-3xl mx-auto p-4 text-white font-['PressStart2P'] text-[10px] tracking-tight">
+        <div className="flex justify-center items-center gap-2 mb-6">
+          <Wallet className="text-[var(--mission-primary)] h-5 w-5" />
+          <h2 className="text-[var(--mission-primary)] text-base drop-shadow-[1px_1px_0_#000]">
+            HISTORIAL DE GASTOS
+          </h2>
+        </div>
+
+        <div className="border-2 border-[var(--mission-primary)] bg-[var(--color-card)] p-8 text-center text-white/80 shadow-[2px_2px_0_#000]">
+          <ShoppingBag className="mx-auto mb-2 text-[var(--mission-primary)] h-6 w-6" />
+          No hay gastos registrados aún.
+        </div>
+      </section>
+    );
+  }
+
+  // 🔹 Si hay historial
   return (
     <section className="w-full max-w-3xl mx-auto p-4 text-white font-['PressStart2P'] text-[10px] tracking-tight">
       <div className="flex justify-center items-center gap-2 mb-6">
@@ -70,50 +92,49 @@ export default function ExpenseHistory() {
         </h2>
       </div>
 
-      {expenses.length === 0 ? (
-        <div className="border-2 border-[var(--mission-primary)] bg-[var(--color-card)] p-8 text-center text-white/80 shadow-[2px_2px_0_#000]">
-          <ShoppingBag className="mx-auto mb-2 text-[var(--mission-primary)] h-6 w-6" />
-          No hay gastos registrados aún.
-        </div>
-      ) : (
-        <div className="grid gap-4">
-          {expenses.map((e) => {
-            const { color, label } = getCategoryInfo(e.category);
+      <div className="grid gap-4">
+        {history.map((e: any) => {
+          const { color, label } = getCategoryInfo(e.category);
 
-            return (
-              <div
-                key={e.id}
-                className={`relative border-2 border-[var(--grid)] bg-[var(--color-card)] 
-                  rounded-sm shadow-[2px_2px_0_#000] hover:shadow-[3px_3px_0_#6C7EFF] 
-                  transition-all duration-150 p-3 flex flex-col`}
-              >
-                <div className={`h-2 mb-2 w-full rounded-sm ${color}`}></div>
+          return (
+            <div
+              key={e._id || e.id}
+              className={`relative border-2 border-[var(--grid)] bg-[var(--color-card)] 
+                rounded-sm shadow-[2px_2px_0_#000] hover:shadow-[3px_3px_0_#6C7EFF] 
+                transition-all duration-150 p-3 flex flex-col`}
+            >
+              {/* 🔹 Color de categoría */}
+              <div className={`h-2 mb-2 w-full rounded-sm ${color}`}></div>
 
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-[var(--mission-primary)] text-[9px] uppercase">
-                    {label}
-                  </span>
-                  <span className="text-yellow-400 text-[11px] font-bold">
-                    ${e.amount.toLocaleString("es-AR")}
-                  </span>
-                </div>
-
-                <p className="text-white/90 text-[8px] leading-snug mb-2">
-                  {e.description || "Sin descripción"}
-                </p>
-
-                <div className="flex justify-between items-center text-[8px] text-white/50 mt-auto">
-                  <span className="flex items-center gap-1">
-                    <Calendar className="h-3 w-3" />
-                    {new Date(e.date).toLocaleDateString("es-AR")}
-                  </span>
-                  <span className="text-white/30">#{e.id.slice(0, 6)}</span>
-                </div>
+              {/* 🔹 Encabezado */}
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-[var(--mission-primary)] text-[9px] uppercase">
+                  {label}
+                </span>
+                <span className="text-yellow-400 text-[11px] font-bold">
+                  ${Number(e.amount).toLocaleString("es-AR")}
+                </span>
               </div>
-            );
-          })}
-        </div>
-      )}
+
+              {/* 🔹 Descripción */}
+              <p className="text-white/90 text-[8px] leading-snug mb-2">
+                {e.description || "Sin descripción"}
+              </p>
+
+              {/* 🔹 Fecha e ID */}
+              <div className="flex justify-between items-center text-[8px] text-white/50 mt-auto">
+                <span className="flex items-center gap-1">
+                  <Calendar className="h-3 w-3" />
+                  {new Date(e.date || e.createdAt).toLocaleDateString("es-AR")}
+                </span>
+                <span className="text-white/30">
+                  #{(e._id || e.id)?.slice(0, 6)}
+                </span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </section>
   );
 }

@@ -10,7 +10,7 @@ export const useRegisterExpense = () => {
   const registerExpense = async ({
     amount,
     category,
-    date,
+    date, // solo para el formulario, no se envía
     description,
     userId,
   }: {
@@ -23,6 +23,7 @@ export const useRegisterExpense = () => {
     setLoading(true);
     setError(null);
 
+    // 🔹 Solo lo que el backend acepta
     const payload = {
       amount: Number(amount),
       category: mapCategory(category),
@@ -46,12 +47,15 @@ export const useRegisterExpense = () => {
       console.log("📤 Payload enviado:", payload);
 
       if (!res.ok) {
+        const text = await res.text();
+        console.error("❌ Respuesta del backend:", res.status, text);
         throw new Error("Error al registrar el gasto");
       }
-      await uploadExperience(10);
+
       console.log("Gasto registrado con éxito 🎉");
+      await uploadExperience(10);
     } catch (err: any) {
-      console.error("Falló el registro:", err);
+      console.error("🚨 Falló el registro:", err);
       setError(err.message || "Error desconocido");
     } finally {
       setLoading(false);
