@@ -10,23 +10,38 @@ interface Expense {
   date: string;
 }
 
-const categoryColor = (category: string) => {
-  switch (category.toLowerCase()) {
-    case "alimentacion":
-    case "food":
-      return "category-alimentacion";
-    case "transporte":
-    case "transport":
-      return "category-transporte";
-    case "entretenimiento":
-    case "entertainment":
-      return "category-entretenimiento";
-    case "servicios":
-    case "utilities":
-      return "category-servicios";
-    default:
-      return "category-otros";
-  }
+const categoryMap: Record<string, { color: string; label: string }> = {
+  alimentacion: { color: "category-alimentacion", label: "Alimentación" },
+  food: { color: "category-alimentacion", label: "Alimentación" },
+
+  transporte: { color: "category-transporte", label: "Transporte" },
+  transport: { color: "category-transporte", label: "Transporte" },
+
+  entretenimiento: {
+    color: "category-entretenimiento",
+    label: "Entretenimiento",
+  },
+  entertainment: {
+    color: "category-entretenimiento",
+    label: "Entretenimiento",
+  },
+
+  servicios: { color: "category-servicios", label: "Servicios" },
+  utilities: { color: "category-servicios", label: "Servicios" },
+
+  salud: { color: "category-servicios", label: "Salud" },
+  health: { color: "category-servicios", label: "Salud" },
+
+  educacion: { color: "category-otros", label: "Educación" },
+  education: { color: "category-otros", label: "Educación" },
+
+  compras: { color: "category-otros", label: "Compras" },
+  shopping: { color: "category-otros", label: "Compras" },
+};
+
+export const getCategoryInfo = (category: string) => {
+  const cat = category.toLowerCase();
+  return categoryMap[cat] || { color: "category-otros", label: "Otros" };
 };
 
 export default function ExpenseHistory() {
@@ -62,39 +77,41 @@ export default function ExpenseHistory() {
         </div>
       ) : (
         <div className="grid gap-4">
-          {expenses.map((e) => (
-            <div
-              key={e.id}
-              className={`relative border-2 border-[var(--grid)] bg-[var(--color-card)] 
-                rounded-sm shadow-[2px_2px_0_#000] hover:shadow-[3px_3px_0_#6C7EFF] 
-                transition-all duration-150 p-3 flex flex-col`}
-            >
+          {expenses.map((e) => {
+            const { color, label } = getCategoryInfo(e.category);
+
+            return (
               <div
-                className={`h-2 mb-2 w-full rounded-sm ${categoryColor(e.category)}`}
-              ></div>
+                key={e.id}
+                className={`relative border-2 border-[var(--grid)] bg-[var(--color-card)] 
+                  rounded-sm shadow-[2px_2px_0_#000] hover:shadow-[3px_3px_0_#6C7EFF] 
+                  transition-all duration-150 p-3 flex flex-col`}
+              >
+                <div className={`h-2 mb-2 w-full rounded-sm ${color}`}></div>
 
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-[var(--mission-primary)] text-[9px] uppercase">
-                  {e.category}
-                </span>
-                <span className="text-yellow-400 text-[11px] font-bold">
-                  ${e.amount.toLocaleString("es-AR")}
-                </span>
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-[var(--mission-primary)] text-[9px] uppercase">
+                    {label}
+                  </span>
+                  <span className="text-yellow-400 text-[11px] font-bold">
+                    ${e.amount.toLocaleString("es-AR")}
+                  </span>
+                </div>
+
+                <p className="text-white/90 text-[8px] leading-snug mb-2">
+                  {e.description || "Sin descripción"}
+                </p>
+
+                <div className="flex justify-between items-center text-[8px] text-white/50 mt-auto">
+                  <span className="flex items-center gap-1">
+                    <Calendar className="h-3 w-3" />
+                    {new Date(e.date).toLocaleDateString("es-AR")}
+                  </span>
+                  <span className="text-white/30">#{e.id.slice(0, 6)}</span>
+                </div>
               </div>
-
-              <p className="text-white/90 text-[8px] leading-snug mb-2">
-                {e.description || "Sin descripción"}
-              </p>
-
-              <div className="flex justify-between items-center text-[8px] text-white/50 mt-auto">
-                <span className="flex items-center gap-1">
-                  <Calendar className="h-3 w-3" />
-                  {new Date(e.date).toLocaleDateString("es-AR")}
-                </span>
-                <span className="text-white/30">#{e.id.slice(0, 6)}</span>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </section>
