@@ -31,7 +31,7 @@ export default function ExpenseButton() {
     });
 
     setRpgMessage(`-${amount} oro gastado en ${category} 💰`);
-    setTimeout(() => setRpgMessage(""), 2000);
+    setTimeout(() => setRpgMessage(""), 3000);
 
     setOpen(false);
     setDescription("");

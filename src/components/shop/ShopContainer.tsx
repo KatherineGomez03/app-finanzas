@@ -3,6 +3,7 @@ import { ItemCardProps } from "./cosas/shop";
 import { mockShop } from "./cosas/mockShop";
 import { CategoryTabs } from "./CategoryTabs";
 import { ItemCard } from "./ItemCard";
+import { Store } from "lucide-react";
 
 
 interface ShopContainerProps {
@@ -30,8 +31,12 @@ export const ShopContainer: React.FC<ShopContainerProps> = ({
     };
 
     return (
-        <section className="min-h-screen p-4 bg-[#0a0f1e] text-gray-100">
-            <h1 className="mb-4 text-center text-lg font-retro text-blue-300">TIENDA DEL AVENTURERO</h1>
+        <section className="min-h-screen p-4 text-gray-100">
+
+            <h2 className="text-mission-primary flex items-center gap-2 text-sm md:text-base mb-6 font-retro">
+                <Store className="h-5 w-5" aria-hidden="true" />
+                TIENDA DEL AVENTURERO
+            </h2>
 
             <CategoryTabs selected={selectedCategory} onSelect={setSelectedCategory} categories={categories} />
 

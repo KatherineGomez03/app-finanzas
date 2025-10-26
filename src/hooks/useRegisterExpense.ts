@@ -1,8 +1,11 @@
 import { useState } from "react";
+import { useUploadExperience } from "./useUploadExperience";
 
 export const useRegisterExpense = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    const { uploadExperience } = useUploadExperience();
 
     const registerExpense = async ({
         amount,
@@ -43,7 +46,7 @@ export const useRegisterExpense = () => {
             if (!res.ok) {
                 throw new Error("Error al registrar el gasto");
             }
-
+            await uploadExperience(10);
             console.log("Gasto registrado con éxito 🎉");
         } catch (err: any) {
             console.error("Falló el registro:", err);

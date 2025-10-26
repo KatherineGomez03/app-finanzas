@@ -8,5 +8,4 @@ export interface ItemCardProps {
     effect?: string;
     price: number;
     category: Category;
-    onBuy: () => void;
 }

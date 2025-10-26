@@ -1,263 +1,313 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Swords } from "lucide-react";
 
-/* ──────────────────────────────
-   Utils
-──────────────────────────────── */
-
-function daysUntilMonthEnd() {
-  const now = new Date();
-  const y = now.getFullYear();
-  const m = now.getMonth();
-  const lastDay = new Date(y, m + 1, 0);
-  const diff = Math.ceil((lastDay.getTime() - new Date(y, m, now.getDate()).getTime()) / (1000 * 60 * 60 * 24));
+/* ============ util fechas ============ */
+function daysToMonthEnd(d: Date = new Date()) {
+  const y = d.getFullYear();
+  const m = d.getMonth();
+  const last = new Date(y, m + 1, 0);
+  const diff = Math.ceil((last.getTime() - d.getTime()) / (1000 * 60 * 60 * 24));
   return Math.max(diff, 0);
 }
-
-type EnemyDef = {
-  nombre: string;
-  nivel: number;
-  hp: number;
-  atk: number;
-  icon?: string;
-  habilidades?: string[];
-  recompensas?: string[];
-};
-
-// Un enemigo fijo por mes
-const ENEMIGOS_MENSUALES: EnemyDef[] = [
-  { nombre: "Zombie Corrupto", nivel: 15, hp: 150, atk: 25, icon: "🧟", habilidades: ["Mordisco Tóxico", "Rugido Aterrador"], recompensas: ["100 monedas", "50 XP", "Poción de Vida"] },
-  { nombre: "Dragón de Fuego", nivel: 18, hp: 200, atk: 35, icon: "🐲", habilidades: ["Llama Infernal", "Ala Cortante"], recompensas: ["150 monedas", "75 XP", "Fragmento Dragón"] },
-  { nombre: "Bruja de las Sombras", nivel: 20, hp: 220, atk: 40, icon: "🧙‍♀️", habilidades: ["Hex Sombrío", "Niebla Oscura"], recompensas: ["200 monedas", "100 XP", "Esencia Sombría"] },
-];
-
-function enemigoDelMes(fecha = new Date()): EnemyDef {
-  const mes = fecha.getMonth();
-  return ENEMIGOS_MENSUALES[mes % ENEMIGOS_MENSUALES.length];
+function isLastDayOfMonth(d: Date = new Date()) {
+  const y = d.getFullYear();
+  const m = d.getMonth();
+  return d.getDate() === new Date(y, m + 1, 0).getDate();
 }
 
-/* ──────────────────────────────
-   Barra simple 
-──────────────────────────────── */
-function Bar({
+/* ============ data enemigo ============ */
+type Enemy = {
+  nombre: string;
+  nivel: number;
+  maxHP: number;
+  atk: number;
+  habilidades: string[];
+  recompensas: string[];
+};
+
+const ENEMIGOS_MENSUALES: Record<number, Enemy> = {
+  0: {
+    nombre: "Zombie Corrupto",
+    nivel: 15,
+    maxHP: 150,
+    atk: 25,
+    habilidades: ["Mordisco Tóxico", "Rugido Aterrador"],
+    recompensas: ["100 monedas", "50 XP", "Poción de Vida"],
+  },
+  1: {
+    nombre: "Dragón de Fuego",
+    nivel: 18,
+    maxHP: 220,
+    atk: 32,
+    habilidades: ["Aliento Ígneo", "Garra Flamígera"],
+    recompensas: ["120 monedas", "70 XP", "Fragmento Escama"],
+  },
+  2: {
+    nombre: "Bruja de las Sombras",
+    nivel: 20,
+    maxHP: 240,
+    atk: 34,
+    habilidades: ["Maldición", "Brebaje Oscuro"],
+    recompensas: ["140 monedas", "90 XP", "Ampolla de Sombras"],
+  },
+};
+
+/* ============ props ============ */
+type ArenaProps = {
+  player?: { nombre: string; maxHP: number; atk: number };
+};
+
+/* ============ barra HP al estilo misiones ============ */
+function HPBar({
   label,
   cur,
   max,
-  color = "bg-green-500",
+  fillClass = "bg-red-500",
 }: {
   label: string;
   cur: number;
   max: number;
-  color?: string;
+  fillClass?: string;
 }) {
-  const pct = Math.max(0, Math.min(100, Math.round((cur / max) * 100)));
+  const pct = Math.max(0, Math.round((cur / max) * 100));
   return (
-    <div className="space-y-1">
-      <div className="text-xs opacity-80 flex justify-between">
-        <span>{label}</span>
-        <span>
-          {cur}/{max}
-        </span>
+    <div>
+      <div className="text-xs opacity-80 mb-1">{label}</div>
+      <div className="hpbar">
+        <div className={`hpbar__fill ${fillClass}`} style={{ width: `${pct}%` }} />
       </div>
-      <div className="h-2 bg-black/40 rounded">
-        <div className={`h-2 ${color} rounded`} style={{ width: `${pct}%` }} />
+      <div className="text-xs opacity-60 mt-1">
+        {cur}/{max}
       </div>
     </div>
   );
 }
 
-/* ──────────────────────────────
-   ArenaSection (estructura clásica)
-──────────────────────────────── */
-export default function ArenaSection() {
+/* ============ arena ============ */
+export default function ArenaSection({ player }: ArenaProps = {}) {
+  const sp = useSearchParams();
+  const forced = sp.get("forceBattle") === "1";
 
-  const player = { hpMax: 120, atk: 30 };
+  const playerBase = player ?? { nombre: "Tú", maxHP: 120, atk: 30 };
 
-  const enemigoBase = useMemo(() => enemigoDelMes(), []);
-  const [playerHP, setPlayerHP] = useState(player.hpMax);
-  const [enemyHP, setEnemyHP] = useState(enemigoBase.hp);
-  const [turnoJugador, setTurnoJugador] = useState(true);
-  const [ended, setEnded] = useState(false);
+  const hoy = new Date();
+  const mes = hoy.getMonth();
+  const enemigo = useMemo<Enemy>(() => ENEMIGOS_MENSUALES[mes] ?? ENEMIGOS_MENSUALES[0], [mes]);
 
-  // consumibles
-  const [potHP, setPotHP] = useState(0);
-  const [potVeneno, setPotVeneno] = useState(0);
+  const diasRestantes = daysToMonthEnd(hoy);
+  const hoyEsBatalla = forced || isLastDayOfMonth(hoy);
 
+  const [playerHP, setPlayerHP] = useState<number>(playerBase.maxHP);
+  const [bossHP, setBossHP] = useState<number>(enemigo.maxHP);
+  const [turno, setTurno] = useState<"tú" | "enemigo">("tú");
   const [log, setLog] = useState<string[]>([]);
+  const [ended, setEnded] = useState<boolean>(false);
 
-  const diasRestantes = daysUntilMonthEnd();
-  const hoyEsBatalla = diasRestantes === 0;
+  const [potsVida, setPotsVida] = useState<number>(0);
+  const [potsVeneno, setPotsVeneno] = useState<number>(0);
 
-  const pushLog = (s: string) => setLog((L) => [s, ...L].slice(0, 200));
-
-  function reset() {
-    setPlayerHP(player.hpMax);
-    setEnemyHP(enemigoBase.hp);
-    setTurnoJugador(true);
+  const appendLog = (line: string) => setLog((l) => [line, ...l].slice(0, 120));
+  const reset = () => {
+    setPlayerHP(playerBase.maxHP);
+    setBossHP(enemigo.maxHP);
+    setTurno("tú");
     setEnded(false);
-    // dejé las pociones igual; si quiern que se reinicien, reseteen acá
     setLog([]);
-    pushLog("Reiniciaste el combate.");
+  };
+
+  const roll = (atk: number) => {
+    const min = Math.floor(atk * 0.8);
+    const max = Math.ceil(atk * 1.2);
+    return Math.max(1, Math.floor(Math.random() * (max - min + 1)) + min);
+  };
+
+  function enemyStrike() {
+    const name = enemigo.habilidades[Math.floor(Math.random() * enemigo.habilidades.length)] ?? "ataque";
+    let dmg = roll(enemigo.atk);
+    if (/(mordisco|aliento)/i.test(name)) dmg = Math.round(dmg * 1.15);
+    return { name, dmg };
+  }
+
+  function turnoEnemigo(postHPActual: number) {
+    setTurno("enemigo");
+    setTimeout(() => {
+      const { name, dmg } = enemyStrike();
+      const nextPlayer = Math.max(0, postHPActual - dmg);
+      setPlayerHP(nextPlayer);
+      appendLog(`💥 ${enemigo.nombre} usa ${name} y golpea por ${dmg}`);
+      if (nextPlayer <= 0) {
+        setEnded(true);
+        appendLog("💀 Has sido derrotado…");
+      } else {
+        setTurno("tú");
+      }
+    }, 300);
   }
 
   function atacar() {
-    if (!hoyEsBatalla || ended) return;
-
-    if (turnoJugador) {
-      const dmg = player.atk;
-      const e = Math.max(0, enemyHP - dmg);
-      setEnemyHP(e);
-      pushLog(`Tú golpeas por ${dmg}`);
-      setTurnoJugador(false);
-      if (e <= 0) {
-        setEnded(true);
-        pushLog("¡Has vencido al enemigo del ahorro!");
-      }
-    } else {
-      const dmg = enemigoBase.atk;
-      const p = Math.max(0, playerHP - dmg);
-      setPlayerHP(p);
-      pushLog(`${enemigoBase.nombre} golpea por ${dmg}`);
-      setTurnoJugador(true);
-      if (p <= 0) {
-        setEnded(true);
-        pushLog("Has sido derrotado…");
-      }
+    if (!hoyEsBatalla || ended || turno !== "tú") return;
+    const dmg = roll(playerBase.atk);
+    const nextBoss = Math.max(0, bossHP - dmg);
+    setBossHP(nextBoss);
+    appendLog(`🗡️ Tú golpeas por ${dmg}`);
+    if (nextBoss <= 0) {
+      setEnded(true);
+      appendLog("🎉 ¡Victoria! Recompensas: " + enemigo.recompensas.join(", "));
+      return;
     }
+    turnoEnemigo(playerHP);
   }
 
   function usarPocionVida() {
-    if (!hoyEsBatalla || ended || potHP <= 0) return;
+    if (!hoyEsBatalla || ended || turno !== "tú") return;
+    if (potsVida <= 0) return appendLog("⚠️ No tienes pociones de vida.");
     const heal = 25;
-    setPotHP((n) => n - 1);
-    setPlayerHP((hp) => Math.min(player.hpMax, hp + heal));
-    pushLog(`Usas Poción de Vida (+${heal}).`);
+    const next = Math.min(playerBase.maxHP, playerHP + heal);
+    setPlayerHP(next);
+    setPotsVida((p) => p - 1);
+    appendLog(`🧪 Usas Poción de Vida (+${heal})`);
+    turnoEnemigo(next);
   }
 
   function usarPocionVeneno() {
-    if (!hoyEsBatalla || ended || potVeneno <= 0) return;
-    const tick = 15;
-    setPotVeneno((n) => n - 1);
-    setEnemyHP((hp) => Math.max(0, hp - tick));
-    pushLog(`Usas Veneno (-${tick}).`);
+    if (!hoyEsBatalla || ended || turno !== "tú") return;
+    if (potsVeneno <= 0) return appendLog("⚠️ No tienes pociones de veneno.");
+    const poison = 18;
+    const nextBoss = Math.max(0, bossHP - poison);
+    setBossHP(nextBoss);
+    setPotsVeneno((p) => p - 1);
+    appendLog(`☠️ Usas Veneno (-${poison} HP enemigo)`);
+    if (nextBoss <= 0) {
+      setEnded(true);
+      appendLog("🎉 ¡Victoria! Recompensas: " + enemigo.recompensas.join(", "));
+      return;
+    }
+    turnoEnemigo(playerHP);
   }
 
   return (
-    <div className="space-y-6">
-      <div className="text-sm opacity-70">⚔️ ARENA DE COMBATE</div>
+    <section className="space-y-6 px-2 md:px-4 py-4">
+      {/* Título */}
+      <h2 className="text-mission-primary flex items-center gap-2 text-sm md:text-base mb-4 font-retro">
+        <Swords className="h-5 w-5" aria-hidden="true" />
+        ARENA DE COMBATE
+      </h2>
+      <div className="text-xs opacity-70">
+        <span className="badge badge-outline">Beta</span>
+        &nbsp;Enfréntate a los enemigos del ahorro y demuestra tu valor
+      </div>
 
-      {!hoyEsBatalla ? (
+      {/* Countdown */}
+      {!hoyEsBatalla && (
         <div className="text-xs opacity-80">
-          Faltan <b>{diasRestantes} día(s)</b> para la batalla (último día del mes).
+          Faltan <b>{diasRestantes}</b> día(s) para la batalla (último día del mes).
         </div>
-      ) : (
-        <div className="text-xs text-emerald-400">¡La batalla está disponible hoy!</div>
       )}
 
-      {/* Jefe actual / info */}
-      <div className="card p-4">
-        <div className="flex items-center justify-between">
-          <h2 className="font-medium">Enemigo del mes</h2>
-          <span className="badge">Nivel {enemigoBase.nivel}</span>
+      {/* Enemigo del mes */}
+      <div className="flex items-center justify-between mb-2">
+        <h3 className="mission-title">Enemigo del mes</h3>
+        <span className="badge badge-primary">Nivel {enemigo.nivel}</span>
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-4">
+        {/* usuario */}
+        <div className="mission-panel">
+          <div className="font-medium mb-2">🗡️ {playerBase.nombre ?? "Tú"}</div>
+          <div className="text-xs opacity-80 mb-1">VIDA (Tú)</div>
+          <div className="hpbar"><div className="hpbar__fill" style={{ width: `${Math.round(playerHP / playerBase.maxHP * 100)}%` }} /></div>
+          <div className="text-xs opacity-60 mt-1">{playerHP}/{playerBase.maxHP}</div>
+          <div className="text-xs mt-2">ATK: {playerBase.atk}</div>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-3 mt-3">
-          <div>
-            <div className="text-sm mb-2">🧍‍♂️ Tú</div>
-            <Bar label="VIDA" cur={playerHP} max={player.hpMax} color="bg-red-500" />
-            <div className="text-xs mt-1 opacity-70">ATK: {player.atk}</div>
-          </div>
+        {/* Enemigo */}
+        <div className="mission-panel">
+          <div className="font-medium mb-2">🧟 {enemigo.nombre}</div>
+          <div className="text-xs opacity-80 mb-1">VIDA (Enemigo)</div>
+          <div className="hpbar"><div className="hpbar__fill" style={{ width: `${Math.round(bossHP / enemigo.maxHP * 100)}%` }} /></div>
+          <div className="text-xs opacity-60 mt-1">{bossHP}/{enemigo.maxHP}</div>
+          <div className="text-xs mt-2">ATK: {enemigo.atk}</div>
+        </div>
+      </div>
 
-          <div>
-            <div className="text-sm mb-2">
-              {enemigoBase.icon ?? "🕱"} {enemigoBase.nombre}
-            </div>
-            <Bar label="VIDA (Enemigo)" cur={enemyHP} max={enemigoBase.hp} color="bg-red-500" />
-            <div className="text-xs mt-1 opacity-70">ATK: {enemigoBase.atk}</div>
-          </div>
+      {/* Habilidades / Recompensas */}
+      <div className="grid md:grid-cols-2 gap-4">
+        <div className="mission-panel">
+          <div className="font-medium mb-2">Habilidades</div>
+          <ul className="mission-list list-disc list-inside space-y-1 text-sm">
+            {enemigo.habilidades.map((h, i) => (
+              <li key={i}>{h}</li>
+            ))}
+          </ul>
         </div>
 
-        {/* Habilidades y recompensas */}
-        <div className="mt-4 grid md:grid-cols-2 gap-4">
-          <div>
-            <div className="text-sm font-medium mb-2">Habilidades</div>
-            <div className="flex flex-wrap gap-2">
-              {(enemigoBase.habilidades ?? []).map((h) => (
-                <span key={h} className="badge">
-                  {h}
-                </span>
-              ))}
-            </div>
-          </div>
-          <div>
-            <div className="text-sm font-medium mb-2">Recompensas por victoria</div>
-            <ul className="text-xs opacity-80 list-disc pl-5">
-              {(enemigoBase.recompensas ?? []).map((r) => (
-                <li key={r}>{r}</li>
-              ))}
-            </ul>
-          </div>
+        <div className="mission-panel">
+          <div className="font-medium mb-2">Recompensas por victoria</div>
+          <ul className="mission-list list-disc list-inside space-y-1 text-sm">
+            {enemigo.recompensas.map((r, i) => (
+              <li key={i}>{r}</li>
+            ))}
+          </ul>
         </div>
       </div>
 
       {/* Acciones */}
-      <div className="card p-4">
-        <div className="flex items-center justify-between">
-          <h3 className="font-medium">Acciones</h3>
-          <div className="text-xs opacity-70">
-            Turno: <b>{turnoJugador ? "Tú" : enemigoBase.nombre}</b>
-          </div>
+      <div className="mission-panel">
+        <div className="flex items-center justify-between mb-3">
+          <h4 className="font-medium">Acciones</h4>
+          <span className="text-xs opacity-70">Turno: {turno === "tú" ? "Tú" : "Enemigo"}</span>
         </div>
 
-        <div className="mt-3 flex items-center gap-3">
+        <div className="rounded-lg border-2 border-[var(--grid)] bg-black/20 p-3 mb-3 max-h-48 overflow-auto">
+          <ul className="text-xs space-y-1">
+            {log.map((l, i) => (
+              <li key={i}>• {l}</li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="flex flex-col md:flex-row gap-3">
           <button
-            className="btn btn-primary"
             onClick={atacar}
-            disabled={!hoyEsBatalla || ended}
-            title={!hoyEsBatalla ? "Disponible solo el último día del mes" : ""}
+            disabled={!hoyEsBatalla || ended || turno !== "tú"}
+            className="badge bg-red-600 text-white hover:opacity-90 px-5 py-3 rounded-xl border-2 border-red-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {turnoJugador ? "Atacar" : "Esperar turno"}
+            ❌ ATACAR
           </button>
-          <button className="btn" onClick={reset}>
-            Reiniciar
-          </button>
-        </div>
-      </div>
 
-      {/* Consumibles */}
-      <div className="card p-4">
-        <h3 className="font-medium mb-3">Consumibles</h3>
-        <div className="flex items-center gap-4">
           <button
-            className="btn"
             onClick={usarPocionVida}
-            disabled={!hoyEsBatalla || ended || potHP <= 0}
+            disabled={!hoyEsBatalla || ended || turno !== "tú"}
+            className="badge bg-emerald-600 text-white hover:opacity-90 px-5 py-3 rounded-xl border-2 border-emerald-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            ✚ Vida ({potHP})
+            💚 USAR POCIÓN
           </button>
+
           <button
-            className="btn"
             onClick={usarPocionVeneno}
-            disabled={!hoyEsBatalla || ended || potVeneno <= 0}
+            disabled={!hoyEsBatalla || ended || turno !== "tú"}
+            className="badge bg-purple-600 text-white hover:opacity-90 px-5 py-3 rounded-xl border-2 border-purple-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            ☠ Veneno ({potVeneno})
+            ☠️ VENENO
+          </button>
+
+          <button
+            onClick={reset}
+            className="badge px-5 py-3 rounded-xl border-2 border-slate-400 bg-slate-800 text-white md:ml-auto hover:opacity-90"
+          >
+            ⟲ REINICIAR
           </button>
         </div>
-        <p className="text-xs opacity-70 mt-2">
-          Las pociones se consumen al usarlas.
-        </p>
-      </div>
 
-      {/* Registro */}
-      <div className="card p-4">
-        <h3 className="font-medium mb-2">Registro de batalla</h3>
-        <ul className="text-xs space-y-1 max-h-60 overflow-auto">
-          {log.map((l, i) => (
-            <li key={i}>{l}</li>
-          ))}
-        </ul>
+        {!forced && (
+          <div className="text-[10px] opacity-60 mt-3">
+            para probar sin esperar fin de mes, abrí Arena con <code>?forceBattle=1</code>
+          </div>
+        )}
       </div>
-    </div>
+    </section>
   );
 }

@@ -135,5 +135,81 @@ body {
   justify-content: center;
   padding: 1rem;
 }
+/*personalizacion para el page*/
+.mission-section {
+  background: var(--color-card);
+  border: 2px solid var(--grid);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 0 0 2px #0003 inset, 0 6px 0 #0003;
+}
+
+.mission-title {
+  font-weight: 700;
+  text-shadow: 2px 2px 0 var(--pixel-shadow);
+}
+
+.mission-panel {
+  background: rgba(0, 0, 0, .2);
+  border: 2px solid var(--grid);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .4rem .8rem;
+  border: 2px solid var(--grid);
+  border-radius: 8px;
+  background: #121826;
+}
+
+.badge-primary {
+  background: var(--mission-primary);
+  border-color: var(--mission-reward-border);
+}
+
+/*inventory and ia*/
+.hpbar {
+  height: 10px;
+  width: 100%;
+  border-radius: 8px;
+  background: #2b2f3a;
+  overflow: hidden;
+  border: 2px solid var(--grid);
+}
+
+.hpbar__fill {
+  height: 100%;
+  background: #ef4444;
+}
 
 /*personalizacion para el page*/
+.responsive-grid {
+  display: grid;
+  gap: 1.5rem;
+  /* equivale a gap-6 */
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  justify-content: center;
+  max-width: 80rem;
+  /* equivale a max-w-6xl */
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  /* px-4 */
+  padding-right: 1rem;
+}
+
+.rarity-raro {
+  background-color: rgba(31, 223, 100, 0.4);
+  border-color: var(--mission-success);
+  color: white;
+}
+
+.rarity-legendario {
+  background-color: rgba(241, 143, 1, 0.4);
+  border-color: var(--color-coin-dark);
+  color: #fef08a;
+}

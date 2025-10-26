@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useSearchParams } from "next/navigation";
+
 import { Header } from "@/components/header/Header";
 import Tabsnav from "@/components/navbar/Tabsnav";
 import ArenaSection from "@/components/ArenaSection";
@@ -11,6 +12,8 @@ import BalanceSection from "@/components/balance/BalanceSection";
 import { ChallengeSection } from "@/components/challenges/ChallengeSection";
 import ExpenseButton from "@/components/button/ExpenseButton";
 import LogoutButton from "@/components/button/LogoutButton";
+import AdviceAI from "@/components/IA/AdviceAI";
+import InventoryPage from "@/components/inventory/InventoryPage";
 import { useUserStats } from "@/hooks/useUserStats";
 import { ShopContainer } from "@/components/shop/ShopContainer";
 import { ChallengeSectionActive } from "@/components/challenges/ChallengeSectionActive";
@@ -29,8 +32,12 @@ function App() {
     defense: 15,
     coins: 285,
   };
+
+  // Tabs
   const sp = useSearchParams();
   const tab = (sp.get("tab") ?? "panel").toLowerCase();
+
+
   const mockSavings = {
     current: 1350,
     goal: 2000,
@@ -41,39 +48,16 @@ function App() {
   const mockData = {
     month: "Octubre",
     categories: [
-      {
-        category: "Alimentación",
-        current: 1500,
-        previous: 1300,
-        color: "green",
-      },
-      {
-        category: "Transporte",
-        current: 1000,
-        previous: 1200,
-        color: "red",
-      },
-      {
-        category: "Entretenimiento",
-        current: 750,
-        previous: 500,
-        color: "yellow",
-      },
-      {
-        category: "Servicios",
-        current: 1250,
-        previous: 1100,
-        color: "red",
-      },
-      {
-        category: "Otros",
-        current: 500,
-        previous: 600,
-        color: "yellow",
-      },
+      { category: "Alimentación", current: 1500, previous: 1300, color: "green" },
+      { category: "Transporte", current: 1000, previous: 1200, color: "red" },
+      { category: "Entretenimiento", current: 750, previous: 500, color: "yellow" },
+      { category: "Servicios", current: 1250, previous: 1100, color: "red" },
+      { category: "Otros", current: 500, previous: 600, color: "yellow" },
     ],
   };
 
+
+  // Gasto por categoría esto lo converti a objeto para AdviceAI
   const mockExpenses = [
     { category: "Alimentación", amount: 1500, color: "#5dd9c1" },
     { category: "Transporte", amount: 1000, color: "#ff7f7f" },
@@ -81,7 +65,9 @@ function App() {
     { category: "Servicios", amount: 1250, color: "#95d5b2" },
     { category: "Otros", amount: 500, color: "#64b5f6" },
   ];
-
+  const expensesByCategory = Object.fromEntries(
+    mockExpenses.map((e) => [e.category, e.amount])
+  );
   const { stats, loading, error } = useUserStats();
 
   if (loading)
@@ -112,24 +98,30 @@ function App() {
 
       <main className="flex-1 pt-[300px] sm:pt-[300px]">
         {tab === "misiones" && (
-          <div className="w-full mt-2 flex flex-col ">
+          <div className="w-full mt-2 mb-6 responsive-grid ">
             <ChallengeSectionActive/>
             <ChallengeSectionCompleted/>
-            
-          </div>
-        )}
+          </div>)
+        }
 
         {tab === "arena" && (
-          <div className=" w-full mt-2 mb-6 ">
+          <div className="w-full mt-2 mb-6 responsive-grid">
             <ArenaSection />
           </div>
         )}
 
         {tab === "tienda" && (
-          <div>
+          <div className="w-full mt-2 mb-6 responsive-grid">
             <ShopContainer onBuyItem={onBuyGlobal} />
           </div>
         )}
+
+        {tab === "inventario" && (
+          <div className="w-full mt-2 mb-6 responsive-grid">
+            < InventoryPage />
+          </div>
+        )}
+
 
         {tab === "panel" && (
           <div>
@@ -138,12 +130,15 @@ function App() {
               {/* <BalanceSection userId={""}/> */}
               <TestBalanceStatic />
             </div>
+            <div className="mx-auto max-w-5xl px-4 mt-6">
+              <AdviceAI />
+            </div>
             <ChallengeSectionActive/>
-
           </div>
         )}
       </main>
     </div>
   );
 }
+
 export default App;
