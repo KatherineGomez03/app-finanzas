@@ -37,7 +37,7 @@ export default function AdviceAI({
   }
 
   return (
-    <section className="mission-section space-y-4">
+    <section className="m-2 p-4 space-y-4 border-2 rounded">
       {/* Encabezado */}
       <div className="flex items-center gap-3">
         <span className="badge badge-outline">🤖</span>

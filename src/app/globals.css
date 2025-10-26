@@ -163,6 +163,7 @@ body {
   border-color: var(--mission-reward-border);
 }
 
+/*inventory and ia*/
 .hpbar {
   height: 10px;
   width: 100%;
