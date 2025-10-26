@@ -53,6 +53,7 @@ function App() {
     ],
   };
 
+
   // Gasto por categoría esto lo converti a objeto para AdviceAI
   const mockExpenses = [
     { category: "Alimentación", amount: 1500, color: "#5dd9c1" },
@@ -61,7 +62,9 @@ function App() {
     { category: "Servicios", amount: 1250, color: "#95d5b2" },
     { category: "Otros", amount: 500, color: "#64b5f6" },
   ];
-
+  const expensesByCategory = Object.fromEntries(
+    mockExpenses.map((e) => [e.category, e.amount])
+  );
   const { stats, loading, error } = useUserStats();
 
   if (loading)
@@ -108,13 +111,23 @@ function App() {
           </div>
         )}
 
+        {tab === "inventario" && (
+          <div className="mx-auto max-w-5xl px-4">
+            < InventoryPage />
+          </div>
+        )}
 
 
         {tab === "panel" && (
-          <div className="m-2 flex flex-col gap-2 md:flex-row md:justify-around ">
-            <PanelContainer />
-            {/* <BalanceSection userId={""}/> */}
-            <TestBalanceStatic />
+          <div>
+            <div className="m-2 flex flex-col gap-2 md:flex-row md:justify-around ">
+              <PanelContainer />
+              {/* <BalanceSection userId={""}/> */}
+              <TestBalanceStatic />
+            </div>
+            <div className="mx-auto max-w-5xl px-4 mt-6">
+              <AdviceAI />
+            </div>
           </div>
         )}
       </main>
