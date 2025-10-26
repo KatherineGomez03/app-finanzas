@@ -94,25 +94,25 @@ function App() {
 
       <main className="flex-1 pt-[250px] sm:pt-[300px]">
         {tab === "misiones" && (
-          <div className=" w-full mt-2 mb-6 responsive-grid">
+          <div className="w-full mt-2 mb-6 responsive-grid">
             <ChallengeSection />
           </div>
         )}
 
         {tab === "arena" && (
-          <div className=" w-full mt-2 mb-6 responsive-grid">
+          <div className="w-full mt-2 mb-6 responsive-grid">
             <ArenaSection />
           </div>
         )}
 
         {tab === "tienda" && (
-          <div className="responsive-grid">
+          <div className="w-full mt-2 mb-6 responsive-grid">
             <ShopContainer onBuyItem={onBuyGlobal} />
           </div>
         )}
 
         {tab === "inventario" && (
-          <div className="mx-auto max-w-5xl px-4">
+          <div className="w-full mt-2 mb-6 responsive-grid">
             < InventoryPage />
           </div>
         )}

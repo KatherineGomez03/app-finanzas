@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { Swords } from "lucide-react";
 
 /* ============ util fechas ============ */
 function daysToMonthEnd(d: Date = new Date()) {
@@ -188,9 +189,12 @@ export default function ArenaSection({ player }: ArenaProps = {}) {
   }
 
   return (
-    <section className="mission-section space-y-6">
+    <section className="space-y-6 px-2 md:px-4 py-4">
       {/* Título */}
-      <div className="mission-title">✖ ARENA DE COMBATE</div>
+      <h2 className="text-mission-primary flex items-center gap-2 text-sm md:text-base mb-4 font-retro">
+        <Swords className="h-5 w-5" aria-hidden="true" />
+        ARENA DE COMBATE
+      </h2>
       <div className="text-xs opacity-70">
         <span className="badge badge-outline">Beta</span>
         &nbsp;Enfréntate a los enemigos del ahorro y demuestra tu valor
@@ -212,18 +216,18 @@ export default function ArenaSection({ player }: ArenaProps = {}) {
       <div className="grid md:grid-cols-2 gap-4">
         {/* usuario */}
         <div className="mission-panel">
-        <div className="font-medium mb-2">🗡️ {playerBase.nombre ?? "Tú"}</div>
-        <div className="text-xs opacity-80 mb-1">VIDA (Tú)</div>
-        <div className="hpbar"><div className="hpbar__fill" style={{width: `${Math.round(playerHP/playerBase.maxHP*100)}%`}} /></div>
-        <div className="text-xs opacity-60 mt-1">{playerHP}/{playerBase.maxHP}</div>
-        <div className="text-xs mt-2">ATK: {playerBase.atk}</div>
-      </div>
+          <div className="font-medium mb-2">🗡️ {playerBase.nombre ?? "Tú"}</div>
+          <div className="text-xs opacity-80 mb-1">VIDA (Tú)</div>
+          <div className="hpbar"><div className="hpbar__fill" style={{ width: `${Math.round(playerHP / playerBase.maxHP * 100)}%` }} /></div>
+          <div className="text-xs opacity-60 mt-1">{playerHP}/{playerBase.maxHP}</div>
+          <div className="text-xs mt-2">ATK: {playerBase.atk}</div>
+        </div>
 
         {/* Enemigo */}
         <div className="mission-panel">
           <div className="font-medium mb-2">🧟 {enemigo.nombre}</div>
           <div className="text-xs opacity-80 mb-1">VIDA (Enemigo)</div>
-          <div className="hpbar"><div className="hpbar__fill" style={{width: `${Math.round(bossHP/enemigo.maxHP*100)}%`}} /></div>
+          <div className="hpbar"><div className="hpbar__fill" style={{ width: `${Math.round(bossHP / enemigo.maxHP * 100)}%` }} /></div>
           <div className="text-xs opacity-60 mt-1">{bossHP}/{enemigo.maxHP}</div>
           <div className="text-xs mt-2">ATK: {enemigo.atk}</div>
         </div>
