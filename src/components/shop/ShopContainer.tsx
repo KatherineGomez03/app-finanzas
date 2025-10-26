@@ -15,7 +15,6 @@ interface ShopContainerProps {
 export const ShopContainer: React.FC<ShopContainerProps> = ({
     items = mockShop,
     categories,
-    onBuyItem,
 }) => {
     const [selectedCategory, setSelectedCategory] = useState<string>("Todos");
 
@@ -23,12 +22,6 @@ export const ShopContainer: React.FC<ShopContainerProps> = ({
         if (selectedCategory === "Todos") return items;
         return items.filter((it) => it.category === selectedCategory);
     }, [items, selectedCategory]);
-
-    // handler que envuelve el onBuy de cada item
-    const handleBuy = (item: ItemCardProps) => {
-        if (onBuyItem) onBuyItem(item);
-        else item.onBuy();
-    };
 
     return (
         <section className="min-h-screen p-4 text-gray-100">
@@ -45,7 +38,6 @@ export const ShopContainer: React.FC<ShopContainerProps> = ({
                     <ItemCard
                         key={`${it.name}-${it.price}`}
                         {...it}
-                        onBuy={() => handleBuy(it)}
                     />
                 ))}
             </div>
