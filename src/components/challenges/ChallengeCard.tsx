@@ -12,14 +12,13 @@ interface ChallengeCardProps {
 
 export function ChallengeCard({ challenge }: ChallengeCardProps) {
   const { incrementChallenge, loading } = useChallenge();
-const isComplete = useMemo(() => {
-  const count = Number(challenge.count ?? 0);
-  const target = Number(challenge.target ?? 1);
-  return target > 0 && count >= target;
-}, [challenge]);
 
-
-  
+  // calcular si está completo 
+  const isComplete = useMemo(() => {
+    const count = Number(challenge.count ?? 0);
+    const target = Number(challenge.target ?? 1);
+    return target > 0 && count >= target;
+  }, [challenge]);
 
   const handleClick = async () => {
     if (isComplete || loading) return;
@@ -28,8 +27,10 @@ const isComplete = useMemo(() => {
 
   return (
     <div
-      className={`border-2 rounded-md shadow-md p-3 ${
-        isComplete ? "border-green-500" : "border-blue-500"
+      className={`border-2 rounded-md shadow-md p-3 transition-all duration-200 ${
+        isComplete
+          ? "border-green-500 bg-green-900/20"
+          : "border-blue-500 bg-blue-900/20"
       }`}
     >
       <div className="flex justify-between items-center mb-2">
@@ -40,6 +41,7 @@ const isComplete = useMemo(() => {
         >
           {challenge.name}
         </h3>
+
         {isComplete ? (
           <Badge color="bg-green-600 flex items-center gap-1">
             <Trophy className="w-3 h-3 inline-block" /> Completo

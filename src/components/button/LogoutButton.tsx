@@ -5,12 +5,10 @@ import { LogOut } from "lucide-react";
 export default function LogoutButton() {
   const handleLogout = () => {
     try {
-      // 🧹 Eliminar solo datos relacionados con misiones
       localStorage.removeItem("token");
       localStorage.removeItem("userid");
       localStorage.clear();
 
-      // 🚪 Redirige al login
       window.location.href = "http://localhost:3001/login";
     } catch (error) {
       console.error("Error al cerrar sesión:", error);

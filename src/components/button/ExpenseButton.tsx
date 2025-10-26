@@ -30,11 +30,9 @@ export default function ExpenseButton() {
       userId,
     });
 
-    // Feedback RPG
     setRpgMessage(`-${amount} oro gastado en ${category} 💰`);
     setTimeout(() => setRpgMessage(""), 2000);
 
-    // Reset form
     setOpen(false);
     setDescription("");
     setAmount("");
@@ -52,11 +50,11 @@ export default function ExpenseButton() {
           {rpgMessage}
         </div>
       )}
-      {/* BOTÓN TRIGGER PIXEL-ART */}
+
       <div className="flex justify-center sm:justify-end items-start bg-[var(--color-coin-dark)] border-white">
         <button
           onClick={() => setOpen(true)}
-          data-active={open}  // ← para pintar como activo cuando el modal está abierto
+          data-active={open}  // para pintar como activo cuando el modal está abierto
           className={[
             // mismo “chip” que los tabs
             "h-8 px-3 py-1 text-xs font-medium leading-none",
@@ -74,7 +72,6 @@ export default function ExpenseButton() {
       </div>
 
 
-      {/* MODAL SIMPLE (sin librerías) */}
       {open && (
         <div
           className="
@@ -93,7 +90,6 @@ export default function ExpenseButton() {
               text-[10px]
             "
           >
-            {/* Header */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-[12px]">
                 <Wallet className="h-4 w-4 text-[#6C7EFF]" />
@@ -107,7 +103,6 @@ export default function ExpenseButton() {
               </button>
             </div>
 
-            {/* Body */}
             <div className="space-y-3 pt-4">
               <div className="space-y-1">
                 <label htmlFor="desc" className="block">
@@ -193,7 +188,6 @@ export default function ExpenseButton() {
                 </select>
               </div>
 
-              {/* Footer */}
               <div className="flex gap-2 pt-2">
                 <button
                   onClick={() => setOpen(false)}

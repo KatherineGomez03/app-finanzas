@@ -1,7 +1,6 @@
 "use client";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 
-/* Tipo interno */
 export interface Challenge {
   _id: string;
   name: string;
@@ -12,20 +11,53 @@ export interface Challenge {
     coins: number;
     item: string;
   };
-  status: "active" | "completed";
+  status?: "active" | "completed";
   createdAt: string;
   updatedAt: string;
 }
 
-/* Hook */
 export function useChallenge() {
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const [currentUser, setCurrentUser] = useState<string | null>(null);
 
   const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000";
 
-  // 🔹 Obtener todos los desafíos
+  const getStorageKey = (userId: string) => `progress_${userId}`;
+
+  // detecta usuario actual y cargar su progreso guardado
+  useEffect(() => {
+    const user = localStorage.getItem("userid");
+    if (user && user !== currentUser) {
+      console.log("👤 Usuario detectado:", user);
+      setCurrentUser(user);
+
+      // si hay progreso guardado, lo cargamos
+      const saved = localStorage.getItem(getStorageKey(user));
+      if (saved) {
+        console.log("📦 Cargando progreso local de", user);
+        setChallenges(JSON.parse(saved));
+      } else {
+        console.log("🆕 Nuevo usuario, sin progreso previo");
+        setChallenges((prev) =>
+          prev.map((c) => ({
+            ...c,
+            count: 0,
+          }))
+        );
+      }
+    }
+  }, [currentUser]);
+
+  // guardar progreso local cada vez que cambian los desafíos
+  useEffect(() => {
+    if (currentUser && challenges.length > 0) {
+      localStorage.setItem(getStorageKey(currentUser), JSON.stringify(challenges));
+    }
+  }, [challenges, currentUser]);
+
+  // obteniene misiones desde el back 
   const fetchChallenges = useCallback(async () => {
     try {
       setLoading(true);
@@ -39,7 +71,30 @@ export function useChallenge() {
       if (!res.ok) throw new Error("Error al obtener desafíos");
 
       const data = await res.json();
-      setChallenges(data);
+      const sanitized = data.map((c: any) => ({
+        ...c,
+        count: Number(c.count ?? 0),
+        target: Number(c.target ?? 1),
+      }));
+
+      // si hay usuario actual, intentamos recuperar su progreso local
+      const user = localStorage.getItem("userid");
+      if (user) {
+        const saved = localStorage.getItem(getStorageKey(user));
+        if (saved) {
+          console.log("🔁 Usando progreso local guardado para", user);
+          setChallenges(JSON.parse(saved));
+          return;
+        }
+      }
+
+      console.log(" Sin progreso local — inicializando desafíos limpios");
+      setChallenges(
+  sanitized.map((c: any) => ({
+    ...c,
+    count: 0,
+  }))
+);
     } catch (err) {
       setError(err as Error);
     } finally {
@@ -47,7 +102,7 @@ export function useChallenge() {
     }
   }, [API_URL]);
 
-  // 🔹 Incrementar progreso individual
+ 
   const incrementChallenge = useCallback(
     async (id: string) => {
       try {
@@ -55,16 +110,18 @@ export function useChallenge() {
         const token = localStorage.getItem("token");
         if (!token) throw new Error("Token no encontrado");
 
-        const res = await fetch(`${API_URL}/challenges/${id}/count`, {
+        await fetch(`${API_URL}/challenges/${id}/count`, {
           method: "PUT",
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        if (!res.ok) throw new Error("Error al actualizar desafío");
-
-        const updated = await res.json();
+        // actualizamos localmente el progreso del usuario
         setChallenges((prev) =>
-          prev.map((c) => (c._id === id ? updated : c))
+          prev.map((c) =>
+            c._id === id
+              ? { ...c, count: Math.min(c.count + 1, c.target) }
+              : c
+          )
         );
       } catch (err) {
         setError(err as Error);
@@ -75,40 +132,5 @@ export function useChallenge() {
     [API_URL]
   );
 
-  // 🔹 Reiniciar TODOS los desafíos (nuevo)
-  const resetAllChallenges = useCallback(async () => {
-    try {
-      setLoading(true);
-      const token = localStorage.getItem("token");
-      if (!token) throw new Error("Token no encontrado");
-
-      const res = await fetch(`${API_URL}/challenges/reset`, {
-        method: "PUT",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (!res.ok) throw new Error("Error al reiniciar desafíos");
-
-      const data = await res.json();
-      console.log("🔄", data.message);
-
-      // Vuelve a cargar todos los desafíos actualizados
-      await fetchChallenges();
-    } catch (err) {
-      console.error("❌ Error al reiniciar desafíos:", err);
-      setError(err as Error);
-    } finally {
-      setLoading(false);
-    }
-  }, [API_URL, fetchChallenges]);
-
-  // 🔹 Exportar funciones
-  return {
-    challenges,
-    loading,
-    error,
-    fetchChallenges,
-    incrementChallenge,
-    resetAllChallenges, // 👈 nuevo export
-  };
+  return { challenges, loading, error, fetchChallenges, incrementChallenge };
 }
