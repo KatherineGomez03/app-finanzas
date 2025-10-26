@@ -52,9 +52,8 @@ export const useRegisterExpense = () => {
         throw new Error("Error al registrar el gasto");
       }
 
-      console.log("✅ Gasto registrado con éxito en backend");
+      console.log("Gasto registrado con éxito 🎉");
       await uploadExperience(10);
-      console.log("🎯 Experiencia actualizada (+10 XP)");
     } catch (err: any) {
       console.error("🚨 Falló el registro:", err);
       setError(err.message || "Error desconocido");

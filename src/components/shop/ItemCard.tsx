@@ -1,6 +1,7 @@
 import React, { JSX, useState } from "react";
 import { ItemCardProps, Rarity, Category } from "./cosas/shop"
 import { Sword, Shield, Heart, Star } from "lucide-react";
+import { useUserStats } from "@/hooks/useUserStats";
 
 const rarityColors: Record<Rarity, string> = {
   Común: "bg-gray-800 border-gray-600 text-gray-200 bg-opacity-60",
@@ -33,6 +34,14 @@ export const ItemCard: React.FC<ItemCardProps> = ({
 
 }) => {
   const [rpgMessage, setRpgMessage] = useState("");
+  const user = useUserStats();
+  const canAfford = (user?.stats?.coins ?? 0) >= price;
+
+  const handleBuy = () => {
+    if (!canAfford) return; // evita clic si no tiene suficiente
+    setRpgMessage(`¡Compraste ${name} por ${price} 🔥!`);
+    setTimeout(() => setRpgMessage(""), 2000);
+  };
 
   return (
     <>
@@ -82,16 +91,16 @@ export const ItemCard: React.FC<ItemCardProps> = ({
             </svg>
             <span className="text-[14px] font-bold">{price}</span>
           </div>
-
           <button
-            onClick={() => {
-              setRpgMessage(`¡Compraste ${name} por ${price} 🔥!`);
-              setTimeout(() => setRpgMessage(""), 2000);
-            }}
-
-            className="px-3 py-1 border-2 rounded-md font-bold text-[12px] bg-blue-700/80 hover:bg-blue-700/100 text-white"
+            onClick={handleBuy}
+            disabled={!canAfford}
+            className={`px-3 py-1 border-2 rounded-md font-bold text-[12px] transition
+          ${canAfford
+                ? "bg-blue-700/80 hover:bg-blue-700/100"
+                : "bg-gray-500/50 cursor-not-allowed opacity-50"
+              }`}
           >
-            COMPRAR
+            {canAfford ? "COMPRAR" : "NO ALCANZA 💸"}
           </button>
         </footer>
       </article>
