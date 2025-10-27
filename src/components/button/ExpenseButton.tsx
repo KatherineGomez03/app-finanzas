@@ -57,13 +57,13 @@ export default function ExpenseButton() {
           data-active={open}  // para pintar como activo cuando el modal está abierto
           className={[
             // mismo “chip” que los tabs
-            "h-8 px-3 py-1 text-xs font-medium leading-none",
+            "h-8 p-2 text-xs font-medium leading-none",
             "inline-flex items-center gap-2 rounded-none",
             "border border-[var(--grid)] bg-[var(--surface)] text-[var(--text-primary)]",
             // efectos
-            "hover:bg-[var(--color-card)] transition-colors duration-150",
+            "hover:bg-[var(--color-coin-bright)] transition-colors duration-150",
             // estado activo igual al tab seleccionado
-            "data-[active=true]:bg-[var(--mission-primary)] data-[active=true]:text-black data-[active=true]:border-white"
+            "data-[active=true]:bg-[var(--color-coin-bright)] data-[active=true]:text-black data-[active=true]:border-white"
           ].join(" ")}
         >
           <Plus className="h-3 w-3 -mt-px" />
