@@ -189,54 +189,68 @@ export default function ArenaSection({ player }: ArenaProps = {}) {
   }
 
   return (
-    <section className="space-y-6 px-2 md:px-4 py-4">
+    <section className="space-y-4 md:space-y-6 px-2 md:px-4 py-4">
       {/* Título */}
-      <h2 className="text-mission-primary flex items-center gap-2 text-sm md:text-base mb-4 font-retro">
-        <Swords className="h-5 w-5" aria-hidden="true" />
+      <h2 className="text-mission-primary flex items-center gap-2 text-sm md:text-base mb-2 md:mb-4 font-retro">
+        <span className="inline-block align-middle" aria-hidden="true">🗡️</span>
         ARENA DE COMBATE
       </h2>
-      <div className="text-xs opacity-70">
+      <div className="text-[11px] md:text-xs opacity-70 flex items-center gap-2">
         <span className="badge badge-outline">Beta</span>
-        &nbsp;Enfréntate a los enemigos del ahorro y demuestra tu valor
+        <span className="leading-tight">Enfréntate a los enemigos del ahorro y demuestra tu valor</span>
       </div>
 
       {/* Countdown */}
       {!hoyEsBatalla && (
-        <div className="text-xs opacity-80">
+        <div className="text-[11px] md:text-xs opacity-80">
           Faltan <b>{diasRestantes}</b> día(s) para la batalla (último día del mes).
         </div>
       )}
 
       {/* Enemigo del mes */}
-      <div className="flex items-center justify-between mb-2">
-        <h3 className="mission-title">Enemigo del mes</h3>
-        <span className="badge badge-primary">Nivel {enemigo.nivel}</span>
+      <div className="flex items-center justify-between mb-1 md:mb-2">
+        <h3 className="mission-title text-sm md:text-base">Enemigo del mes</h3>
+        <span className="badge badge-primary text-xs md:text-sm">Nivel {enemigo.nivel}</span>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
         {/* usuario */}
-        <div className="mission-panel">
-          <div className="font-medium mb-2">🗡️ {playerBase.nombre ?? "Tú"}</div>
-          <div className="text-xs opacity-80 mb-1">VIDA (Tú)</div>
-          <div className="hpbar"><div className="hpbar__fill" style={{ width: `${Math.round(playerHP / playerBase.maxHP * 100)}%` }} /></div>
-          <div className="text-xs opacity-60 mt-1">{playerHP}/{playerBase.maxHP}</div>
-          <div className="text-xs mt-2">ATK: {playerBase.atk}</div>
+        <div className="mission-panel p-3 md:p-4">
+          <div className="font-medium mb-2 text-sm md:text-base">🗡️ {playerBase.nombre ?? "Tú"}</div>
+          <div className="text-[11px] md:text-xs opacity-80 mb-1">VIDA (Tú)</div>
+          <div className="hpbar h-3 md:h-3.5">
+            <div
+              className="hpbar__fill"
+              style={{ width: `${Math.round((playerHP / playerBase.maxHP) * 100)}%` }}
+            />
+          </div>
+          <div className="text-[11px] md:text-xs opacity-60 mt-1">
+            {playerHP}/{playerBase.maxHP}
+          </div>
+          <div className="text-xs md:text-sm mt-2">ATK: {playerBase.atk}</div>
         </div>
 
         {/* Enemigo */}
-        <div className="mission-panel">
-          <div className="font-medium mb-2">🧟 {enemigo.nombre}</div>
-          <div className="text-xs opacity-80 mb-1">VIDA (Enemigo)</div>
-          <div className="hpbar"><div className="hpbar__fill" style={{ width: `${Math.round(bossHP / enemigo.maxHP * 100)}%` }} /></div>
-          <div className="text-xs opacity-60 mt-1">{bossHP}/{enemigo.maxHP}</div>
-          <div className="text-xs mt-2">ATK: {enemigo.atk}</div>
+        <div className="mission-panel p-3 md:p-4">
+          <div className="font-medium mb-2 text-sm md:text-base">🧟 {enemigo.nombre}</div>
+          <div className="text-[11px] md:text-xs opacity-80 mb-1">VIDA (Enemigo)</div>
+          <div className="hpbar h-3 md:h-3.5">
+            <div
+              className="hpbar__fill"
+              style={{ width: `${Math.round((bossHP / enemigo.maxHP) * 100)}%` }}
+            />
+          </div>
+          <div className="text-[11px] md:text-xs opacity-60 mt-1">
+            {bossHP}/{enemigo.maxHP}
+          </div>
+          <div className="text-xs md:text-sm mt-2">ATK: {enemigo.atk}</div>
         </div>
       </div>
 
       {/* Habilidades / Recompensas */}
-      <div className="grid md:grid-cols-2 gap-4">
-        <div className="mission-panel">
-          <div className="font-medium mb-2">Habilidades</div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+        <div className="mission-panel p-3 md:p-4">
+          <div className="font-medium mb-2 text-sm md:text-base">Habilidades</div>
           <ul className="mission-list list-disc list-inside space-y-1 text-sm">
             {enemigo.habilidades.map((h, i) => (
               <li key={i}>{h}</li>
@@ -244,8 +258,8 @@ export default function ArenaSection({ player }: ArenaProps = {}) {
           </ul>
         </div>
 
-        <div className="mission-panel">
-          <div className="font-medium mb-2">Recompensas por victoria</div>
+        <div className="mission-panel p-3 md:p-4">
+          <div className="font-medium mb-2 text-sm md:text-base">Recompensas por victoria</div>
           <ul className="mission-list list-disc list-inside space-y-1 text-sm">
             {enemigo.recompensas.map((r, i) => (
               <li key={i}>{r}</li>
@@ -255,25 +269,27 @@ export default function ArenaSection({ player }: ArenaProps = {}) {
       </div>
 
       {/* Acciones */}
-      <div className="mission-panel">
-        <div className="flex items-center justify-between mb-3">
-          <h4 className="font-medium">Acciones</h4>
-          <span className="text-xs opacity-70">Turno: {turno === "tú" ? "Tú" : "Enemigo"}</span>
+      <div className="mission-panel p-3 md:p-4">
+        <div className="flex items-center justify-between mb-2 md:mb-3">
+          <h4 className="font-medium text-sm md:text-base">Acciones</h4>
+          <span className="text-[11px] md:text-xs opacity-70">
+            Turno: {turno === "tú" ? "Tú" : "Enemigo"}
+          </span>
         </div>
 
-        <div className="rounded-lg border-2 border-[var(--grid)] bg-black/20 p-3 mb-3 max-h-48 overflow-auto">
-          <ul className="text-xs space-y-1">
+        <div className="rounded-lg border-2 border-[var(--grid)] bg-black/20 p-2 md:p-3 mb-3 max-h-40 md:max-h-48 overflow-auto">
+          <ul className="text-[11px] md:text-xs space-y-1">
             {log.map((l, i) => (
               <li key={i}>• {l}</li>
             ))}
           </ul>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-3">
+        <div className="flex flex-col md:flex-row gap-2 md:gap-3">
           <button
             onClick={atacar}
             disabled={!hoyEsBatalla || ended || turno !== "tú"}
-            className="badge bg-red-600 text-white hover:opacity-90 px-5 py-3 rounded-xl border-2 border-red-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full md:w-auto badge bg-red-600 text-white hover:opacity-90 px-4 md:px-5 py-2.5 md:py-3 rounded-xl border-2 border-red-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             ❌ ATACAR
           </button>
@@ -281,7 +297,7 @@ export default function ArenaSection({ player }: ArenaProps = {}) {
           <button
             onClick={usarPocionVida}
             disabled={!hoyEsBatalla || ended || turno !== "tú"}
-            className="badge bg-emerald-600 text-white hover:opacity-90 px-5 py-3 rounded-xl border-2 border-emerald-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full md:w-auto badge bg-emerald-600 text-white hover:opacity-90 px-4 md:px-5 py-2.5 md:py-3 rounded-xl border-2 border-emerald-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             💚 USAR POCIÓN
           </button>
@@ -289,14 +305,14 @@ export default function ArenaSection({ player }: ArenaProps = {}) {
           <button
             onClick={usarPocionVeneno}
             disabled={!hoyEsBatalla || ended || turno !== "tú"}
-            className="badge bg-purple-600 text-white hover:opacity-90 px-5 py-3 rounded-xl border-2 border-purple-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full md:w-auto badge bg-purple-600 text-white hover:opacity-90 px-4 md:px-5 py-2.5 md:py-3 rounded-xl border-2 border-purple-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             ☠️ VENENO
           </button>
 
           <button
             onClick={reset}
-            className="badge px-5 py-3 rounded-xl border-2 border-slate-400 bg-slate-800 text-white md:ml-auto hover:opacity-90"
+            className="w-full md:w-auto badge px-4 md:px-5 py-2.5 md:py-3 rounded-xl border-2 border-slate-400 bg-slate-800 text-white md:ml-auto hover:opacity-90"
           >
             ⟲ REINICIAR
           </button>

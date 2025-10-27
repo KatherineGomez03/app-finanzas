@@ -37,25 +37,25 @@ export default function AdviceAI({
   }
 
   return (
-    <section className="m-2 p-4 space-y-4 border-2 rounded">
+    <section className="m-2 p-3 md:p-4 space-y-3 md:space-y-4 border-2 rounded-lg">
       {/* Encabezado */}
-      <div className="flex items-center gap-3">
-        <span className="badge badge-outline">🤖</span>
-        <h3 className="mission-title">IA de Consejos</h3>
+      <div className="flex flex-wrap items-center gap-2 md:gap-3">
+        <span className="badge badge-outline shrink-0">🤖</span>
+        <h3 className="mission-title text-sm md:text-base">IA de Consejos</h3>
 
-        <div className="ml-auto flex flex-wrap items-center gap-3">
-          <span className="badge">
+        <div className="ml-auto flex flex-wrap items-center gap-2 md:gap-3 w-full sm:w-auto">
+          <span className="badge text-xs md:text-sm w-full sm:w-auto justify-center">
             Gasto mensual: ${gastoMensual.toLocaleString()}
           </span>
 
-          <span className="badge badge-primary">
+          <span className="badge badge-primary text-xs md:text-sm w-full sm:w-auto justify-center">
             Meta: ${ahorroActual.toLocaleString()} / ${meta.toLocaleString()}
           </span>
 
           <button
             onClick={refetch}
             disabled={loading}
-            className="badge"
+            className="badge text-xs md:text-sm w-full sm:w-auto justify-center"
             aria-label="Refrescar consejos"
           >
             ⟳ {loading ? "Cargando..." : "Refrescar"}
@@ -64,13 +64,13 @@ export default function AdviceAI({
       </div>
 
       {/* Caja de resultados */}
-      <div className="mission-panel">
+      <div className="mission-panel p-3 md:p-4">
         {tips.length === 0 ? (
-          <div className="opacity-80">
+          <div className="opacity-80 text-sm md:text-base leading-relaxed">
             No hay recomendaciones por ahora. ¡Probá actualizar!
           </div>
         ) : (
-          <ul className="mission-list space-y-2 text-sm">
+          <ul className="mission-list space-y-2 text-sm md:text-base">
             {tips.map((t, i) => (
               <li key={i}>{t}</li>
             ))}
