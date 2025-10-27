@@ -138,7 +138,7 @@ function App() {
 
         {tab === "panel" && (
           <div>
-            <div className="m-2 flex flex-col gap-2 md:flex-row md:justify-around ">
+            <div className="m-2 max-w-170 flex flex-col gap-2 md:flex-row md:justify-around">
               <PanelContainer />
               {/* <BalanceSection userId={""}/> */}
               <TestBalanceStatic />
