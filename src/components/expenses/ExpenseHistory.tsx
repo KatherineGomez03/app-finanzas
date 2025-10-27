@@ -1,5 +1,5 @@
 "use client";
-import { Wallet, Calendar, ShoppingBag } from "lucide-react";
+import { Wallet, Calendar, ShoppingBag, Book } from "lucide-react";
 import { useEffect } from "react";
 import { useHistory } from "@/hooks/useHistory";
 
@@ -66,13 +66,13 @@ export default function ExpenseHistory() {
   // 🔹 Si no hay gastos
   if (!history || history.length === 0) {
     return (
-      <section className="w-full max-w-3xl mx-auto p-4 text-white font-['PressStart2P'] text-[10px] tracking-tight">
-        <div className="flex justify-center items-center gap-2 mb-6">
-          <Wallet className="text-[var(--mission-primary)] h-5 w-5" />
-          <h2 className="text-[var(--mission-primary)] text-base drop-shadow-[1px_1px_0_#000]">
-            HISTORIAL DE GASTOS
-          </h2>
-        </div>
+      <section className="w-full p-4">
+
+        <h2 className="text-mission-primary flex items-center gap-2 text-sm md:text-base mb-6 font-retro">
+          <Wallet className="h-5 w-5" aria-hidden="true" />
+          Historial
+        </h2>
+
 
         <div className="border-2 border-[var(--mission-primary)] bg-[var(--color-card)] p-8 text-center text-white/80 shadow-[2px_2px_0_#000]">
           <ShoppingBag className="mx-auto mb-2 text-[var(--mission-primary)] h-6 w-6" />
@@ -84,15 +84,13 @@ export default function ExpenseHistory() {
 
   // 🔹 Si hay historial
   return (
-    <section className="w-full max-w-3xl mx-auto p-4 text-white font-['PressStart2P'] text-[10px] tracking-tight">
-      <div className="flex justify-center items-center gap-2 mb-6">
-        <Wallet className="text-[var(--mission-primary)] h-5 w-5" />
-        <h2 className="text-[var(--mission-primary)] text-base drop-shadow-[1px_1px_0_#000]">
-          HISTORIAL DE GASTOS
-        </h2>
-      </div>
+    <section className="w-full mx-auto p-4 text-white font-['PressStart2P'] text-[10px] tracking-tight">
+      <h2 className="text-mission-primary flex items-center gap-2 text-sm md:text-base mb-6 font-retro">
+        <Wallet className="h-5 w-5" aria-hidden="true" />
+        HISTORIAL
+      </h2>
 
-      <div className="grid gap-4">
+      <div className="w-full grid gap-4">
         {history.map((e: any) => {
           const { color, label } = getCategoryInfo(e.category);
 
