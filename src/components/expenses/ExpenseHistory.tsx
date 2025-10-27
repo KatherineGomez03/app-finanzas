@@ -2,6 +2,7 @@
 import { Wallet, Calendar, ShoppingBag, Book } from "lucide-react";
 import { useEffect } from "react";
 import { useHistory } from "@/hooks/useHistory";
+import HistoryButton from "../button/HistoryButton";
 
 // 🔹 Mapa de categorías traducidas y coloreadas
 const categoryMap: Record<string, { color: string; label: string }> = {
@@ -85,10 +86,15 @@ export default function ExpenseHistory() {
   // 🔹 Si hay historial
   return (
     <section className="w-full mx-auto p-4 text-white font-['PressStart2P'] text-[10px] tracking-tight">
-      <h2 className="text-mission-primary flex items-center gap-2 text-sm md:text-base mb-6 font-retro">
-        <Wallet className="h-5 w-5" aria-hidden="true" />
-        HISTORIAL
-      </h2>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-mission-primary flex items-center gap-2 text-sm md:text-base font-retro">
+          <Wallet className="h-5 w-5" aria-hidden="true" />
+          HISTORIAL
+        </h2>
+        <HistoryButton />
+      </div>
+
+
 
       <div className="w-full grid gap-4">
         {history.map((e: any) => {
