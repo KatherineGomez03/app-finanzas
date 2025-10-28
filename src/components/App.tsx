@@ -4,7 +4,7 @@ import React from "react";
 import { Header } from "./header/Header";                
 import { PanelContainer } from "./panel/PanelContainer";  
 import SaveContainer from "./save/SaveContainer";         // ← default (sin llaves)
-import Tabsnav from "./Tabsnav";                           
+import Tabsnav from "./navbar/Tabsnav";                          
 import ArenaSection from "@/components/ArenaSection";
 import { useSearchParams } from "next/navigation";   
 

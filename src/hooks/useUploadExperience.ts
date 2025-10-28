@@ -32,9 +32,10 @@ export function useUploadExperience() {
             }
             triggerUpdate()
             console.log(`Experiencia subida con éxito (+${experience} XP)`);
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Falló la subida de experiencia:', err);
-            setError(err.message || 'Error desconocido');
+            if (err instanceof Error) setError(err.message)
+            else setError(String(err))
         } finally {
             setLoading(false);
         }

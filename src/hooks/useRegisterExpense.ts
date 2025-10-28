@@ -54,9 +54,10 @@ export const useRegisterExpense = () => {
 
       console.log("Gasto registrado con éxito 🎉");
       await uploadExperience(10);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("🚨 Falló el registro:", err);
-      setError(err.message || "Error desconocido");
+      if (err instanceof Error) setError(err.message)
+      else setError(String(err))
     } finally {
       setLoading(false);
     }
