@@ -71,11 +71,19 @@ export function useChallenge() {
       if (!res.ok) throw new Error("Error al obtener desafíos");
 
       const data = await res.json();
-      const sanitized = data.map((c: any) => ({
-        ...c,
-        count: Number(c.count ?? 0),
-        target: Number(c.target ?? 1),
-      }));
+      const sanitized = Array.isArray(data)
+        ? data.map((c: unknown) => {
+            const cc = c as Record<string, unknown> & {
+              count?: unknown;
+              target?: unknown;
+            };
+            return {
+              ...cc,
+              count: Number(cc.count ?? 0),
+              target: Number(cc.target ?? 1),
+            } as unknown as Challenge;
+          })
+        : [];
 
       // si hay usuario actual, intentamos recuperar su progreso local
       const user = localStorage.getItem("userid");
@@ -90,13 +98,13 @@ export function useChallenge() {
 
       console.log(" Sin progreso local — inicializando desafíos limpios");
       setChallenges(
-  sanitized.map((c: any) => ({
-    ...c,
-    count: 0,
-  }))
-);
-    } catch (err) {
-      setError(err as Error);
+        sanitized.map((c) => ({
+          ...c,
+          count: 0,
+        }))
+      );
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err : new Error(String(err)));
     } finally {
       setLoading(false);
     }

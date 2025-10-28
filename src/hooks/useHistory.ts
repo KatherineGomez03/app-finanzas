@@ -43,7 +43,7 @@ export const useHistory = () => {
         throw new Error("Error al obtener el historial de gastos");
       }
 
-      const data = await res.json();
+      const data = (await res.json()) as Expense[];
       // 🔹 Ordenar por fecha de creación
       const sorted = [...data].sort(
         (a, b) =>
@@ -51,9 +51,10 @@ export const useHistory = () => {
       );
 
       setHistory(sorted);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("⚠️ Error al cargar historial:", err);
-      setError(err.message || "Error desconocido");
+      if (err instanceof Error) setError(err.message)
+      else setError(String(err))
     } finally {
       setLoading(false);
     }

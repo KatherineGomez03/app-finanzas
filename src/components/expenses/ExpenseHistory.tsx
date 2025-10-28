@@ -40,6 +40,16 @@ export const getCategoryInfo = (category: string) => {
   return categoryMap[cat] || { color: "category-otros", label: "Otros" };
 };
 
+type ExpenseItem = {
+  _id?: string;
+  id?: string;
+  category: string;
+  amount: number | string;
+  description?: string;
+  date?: string;
+  createdAt?: string;
+};
+
 export default function ExpenseHistory() {
   // ✅ Hook real que obtiene el historial
   const { history, loading, error, refetch } = useHistory();
@@ -97,8 +107,10 @@ export default function ExpenseHistory() {
 
 
       <div className="w-full grid gap-4">
-        {history.map((e: any) => {
+        {history.map((e: ExpenseItem) => {
           const { color, label } = getCategoryInfo(e.category);
+          // Determinar fecha segura: si no hay fecha mostramos guion
+          const dateStr = e.date ?? e.createdAt ?? null;
 
           return (
             <div
@@ -129,7 +141,7 @@ export default function ExpenseHistory() {
               <div className="flex justify-between items-center text-[8px] text-white/50 mt-auto">
                 <span className="flex items-center gap-1">
                   <Calendar className="h-3 w-3" />
-                  {new Date(e.date || e.createdAt).toLocaleDateString("es-AR")}
+                  {dateStr ? new Date(dateStr).toLocaleDateString("es-AR") : "—"}
                 </span>
                 <span className="text-white/30">
                   #{(e._id || e.id)?.slice(0, 6)}

@@ -1,7 +1,11 @@
 import { useState } from 'react'
 import { Eye, EyeOff, LogIn } from 'lucide-react'
 
-export const LoginForm = () => {
+type LoginFormProps = {
+    onLoginSuccess?: (token: string) => void
+}
+
+export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
@@ -23,9 +27,16 @@ export const LoginForm = () => {
 
             localStorage.setItem('token', data.access_token)
             localStorage.setItem('userid', data.user._id) //me guardo el id
-            window.location.href = '/home'
-        } catch (err: any) {
-            setError(err.message)
+            // Si la página que usa el componente pasa onLoginSuccess, la llamamos (mejor para tests/SSR-safe flows).
+            if (onLoginSuccess) {
+                onLoginSuccess(data.access_token)
+            } else {
+                // Fallback a navegación tradicional en cliente
+                if (typeof window !== 'undefined') window.location.href = '/home'
+            }
+        } catch (err: unknown) {
+            if (err instanceof Error) setError(err.message)
+            else setError(String(err))
         }
     }
 

@@ -57,8 +57,9 @@ export const RegisterContainer = () => {
       if (!res.ok) throw new Error(data.message || 'Error al registrar')
 
       setSuccess('¡Registro exitoso! Ahora puedes iniciar sesión.')
-    } catch (err: any) {
-      setError(err.message)
+    } catch (err: unknown) {
+      if (err instanceof Error) setError(err.message)
+      else setError(String(err))
     }
   }
 

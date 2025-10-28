@@ -8,4 +8,6 @@ export interface ItemCardProps {
     effect?: string;
     price: number;
     category: Category;
+    // Callback opcional al comprar (mock / handler en la UI)
+    onBuy?: () => void;
 }
