@@ -8,6 +8,8 @@ export interface Challenge {
   count: number;
   target: number;
   reward: {
+    _id?: string; // ✅ necesario para vincular con rewards
+    id?: string;
     coins: number;
     item: string;
   };
@@ -23,23 +25,21 @@ export function useChallenge() {
   const [currentUser, setCurrentUser] = useState<string | null>(null);
 
   const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000";
-
   const getStorageKey = (userId: string) => `progress_${userId}`;
 
-  // detecta usuario actual y cargar su progreso guardado
+  // Detectar usuario actual
   useEffect(() => {
     const user = localStorage.getItem("userid");
     if (user && user !== currentUser) {
       console.log("👤 Usuario detectado:", user);
       setCurrentUser(user);
 
-      // si hay progreso guardado, lo cargamos
       const saved = localStorage.getItem(getStorageKey(user));
       if (saved) {
         console.log("📦 Cargando progreso local de", user);
         setChallenges(JSON.parse(saved));
       } else {
-        console.log("🆕 Nuevo usuario, sin progreso previo");
+        console.log("🆕 Nuevo usuario sin progreso previo");
         setChallenges((prev) =>
           prev.map((c) => ({
             ...c,
@@ -50,14 +50,14 @@ export function useChallenge() {
     }
   }, [currentUser]);
 
-  // guardar progreso local cada vez que cambian los desafíos
+  // Guardar progreso local
   useEffect(() => {
     if (currentUser && challenges.length > 0) {
       localStorage.setItem(getStorageKey(currentUser), JSON.stringify(challenges));
     }
   }, [challenges, currentUser]);
 
-  // obteniene misiones desde el back 
+  // Obtener desafíos
   const fetchChallenges = useCallback(async () => {
     try {
       setLoading(true);
@@ -77,7 +77,6 @@ export function useChallenge() {
         target: Number(c.target ?? 1),
       }));
 
-      // si hay usuario actual, intentamos recuperar su progreso local
       const user = localStorage.getItem("userid");
       if (user) {
         const saved = localStorage.getItem(getStorageKey(user));
@@ -88,13 +87,12 @@ export function useChallenge() {
         }
       }
 
-      console.log(" Sin progreso local — inicializando desafíos limpios");
       setChallenges(
-  sanitized.map((c: any) => ({
-    ...c,
-    count: 0,
-  }))
-);
+        sanitized.map((c: any) => ({
+          ...c,
+          count: 0,
+        }))
+      );
     } catch (err) {
       setError(err as Error);
     } finally {
@@ -102,7 +100,7 @@ export function useChallenge() {
     }
   }, [API_URL]);
 
- 
+  // Incrementar progreso
   const incrementChallenge = useCallback(
     async (id: string) => {
       try {
@@ -115,7 +113,6 @@ export function useChallenge() {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        // actualizamos localmente el progreso del usuario
         setChallenges((prev) =>
           prev.map((c) =>
             c._id === id
