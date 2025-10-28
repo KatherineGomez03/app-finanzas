@@ -1,26 +1,201 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'PressStart2P';
+  src: url('/fonts/PressStart2P.ttf') format('truetype');
+  font-display: swap;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --pixel-shadow: #121a25;
+  --color-navy: #0F2233;
+  --color-card: #0B1A28;
+  --color-outline-red: #A43B3B;
+  --color-outline-blue: #2f6bcb;
+  --color-coin-bright: #FFB703;
+  --color-coin-dark: #F18F01;
+  --mission-primary: #13d2e0;
+  --mission-success: #1FDF64;
+  --mission-reward-border: #FF4D00;
+  --mission-reward-text: #FFD60A;
+  --back: #0e1424;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'PressStart2P', system-ui, sans-serif;
+  background-color: var(--back);
+  color: white;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
 }
+
+/* Utilidades personalizadas */
+.bg-card {
+  background-color: var(--color-card);
+}
+
+.text-outline-red {
+  color: var(--color-outline-red);
+}
+
+.text-outline-blue {
+  color: var(--color-outline-blue);
+}
+
+.text-coin-bright {
+  color: var(--color-coin-bright);
+}
+
+.text-coin-dark {
+  color: var(--color-coin-dark);
+}
+
+.border-outline-red {
+  border: 2px solid var(--color-outline-red);
+}
+
+.border-outline-blue {
+  border: 2px solid var(--color-outline-blue);
+}
+
+.border-coin-bright {
+  border: 2px solid var(--color-coin-bright);
+}
+
+.shadow-pixel {
+  box-shadow: 0 0 4px var(--pixel-shadow);
+}
+
+/* para el panel */
+
+.category-alimentacion {
+  background-color: #5dd9c1;
+}
+
+.category-transporte {
+  background-color: #ff7f7f;
+}
+
+.category-entretenimiento {
+  background-color: #ffe599;
+}
+
+.category-servicios {
+  background-color: #95d5b2;
+}
+
+.category-otros {
+  background-color: #64b5f6;
+}
+
+/*misiones*/
+
+.bg-mission-primary {
+  background-color: var(--mission-primary);
+}
+
+.text-mission-primary {
+  color: var(--mission-primary);
+}
+
+.border-mission-primary {
+  border-color: var(--mission-primary);
+}
+
+.bg-mission-success {
+  background-color: var(--mission-success);
+}
+
+.text-mission-success {
+  color: var(--mission-success);
+}
+
+.border-mission-success {
+  border-color: var(--mission-success);
+}
+
+.text-mission-reward {
+  color: var(--mission-reward-text);
+}
+
+.border-mission-reward {
+  border-color: var(--mission-reward-border);
+}
+
+.shadow-mission {
+  box-shadow: 0 0 6px var(--mission-primary),
+    0 0 8px var(--mission-success);
+}
+
+.grid-misiones {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  justify-content: center;
+  padding: 1rem;
+}
+
+/*inventory and ia*/
+.mission-section {
+  background: var(--color-card);
+  border: 2px solid var(--grid);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 0 0 2px #0003 inset, 0 6px 0 #0003;
+}
+
+.mission-title {
+  font-weight: 700;
+  text-shadow: 2px 2px 0 var(--pixel-shadow);
+}
+
+.mission-panel {
+  background: rgba(0, 0, 0, .2);
+  border: 2px solid var(--grid);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .4rem .8rem;
+  border: 2px solid var(--grid);
+  border-radius: 8px;
+  background: #121826;
+}
+
+.badge-primary {
+  background: var(--mission-primary);
+  border-color: var(--mission-reward-border);
+}
+
+.hpbar {
+  height: 10px;
+  width: 100%;
+  border-radius: 8px;
+  background: #2b2f3a;
+  overflow: hidden;
+  border: 2px solid var(--grid);
+}
+
+.hpbar__fill {
+  height: 100%;
+  background: #ef4444;
+}
+
+.rarity-raro {
+  background-color: rgba(31, 223, 100, 0.4);
+  border-color: var(--mission-success);
+  color: white;
+}
+
+.rarity-legendario {
+  background-color: rgba(241, 143, 1, 0.4);
+  border-color: var(--color-coin-dark);
+  color: #fef08a;
+}
+
+/*personalizacion para el page*/
