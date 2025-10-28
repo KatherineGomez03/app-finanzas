@@ -29,6 +29,7 @@ export const useRegisterExpense = () => {
       category: mapCategory(category),
       description,
       userId,
+      date,
       type: "expense",
     };
 
