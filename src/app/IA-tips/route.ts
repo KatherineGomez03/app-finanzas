@@ -8,12 +8,19 @@ type TipsRequest = {
   expensesByCategory: Record<string, number>;
 };
 
+type Tip = {
+  title: string;
+  body: string;
+  impact: "low" | "medium" | "high";
+  category?: string;
+};
+
 export async function POST(req: Request) {
   const payload = (await req.json()) as TipsRequest;
 
   // Fallback local (reglas simples)
   const localHeuristics = () => {
-    const tips: any[] = [];
+  const tips: Tip[] = [];
     const { expensesByCategory, savingsGoal, currentSavings, daysLeft } = payload;
     const total = Object.values(expensesByCategory || {}).reduce((a, b) => a + b, 0);
 
