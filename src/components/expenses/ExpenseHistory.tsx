@@ -114,7 +114,7 @@ export default function ExpenseHistory() {
                 </span>
                 <span className="flex items-center gap-1 text-white/60 whitespace-nowrap">
                   <Calendar className="h-4 w-4" />
-                  {dateStr ? new Date(dateStr).toLocaleDateString("es-AR") : "—"}
+                  {dateStr ? new Date((dateStr.split("T")[0] + "T00:00:00")).toLocaleDateString("es-AR") : "—"}
                 </span>
               </div>
             </div>
