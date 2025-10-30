@@ -8,7 +8,7 @@ export default function LogoutButton() {
       localStorage.removeItem("token");
       localStorage.removeItem("userid");
       localStorage.clear();
-      window.location.href = "http://localhost:3001/login";
+      window.location.href = "/login";
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
     }
