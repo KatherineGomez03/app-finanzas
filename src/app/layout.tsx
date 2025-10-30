@@ -24,7 +24,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MonEvo",
+  title: "Monevo",
   description: "Accede al reino financiero",
 };
 
