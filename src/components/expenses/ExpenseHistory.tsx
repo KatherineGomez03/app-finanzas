@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { useHistory } from "@/hooks/useHistory";
 import HistoryButton from "../button/HistoryButton";
 
-// 🔹 Mapa de categorías traducidas y coloreadas
 const categoryMap: Record<string, { color: string; label: string }> = {
   alimentacion: { color: "category-alimentacion", label: "Alimentación" },
   food: { color: "category-alimentacion", label: "Alimentación" },
@@ -98,10 +97,8 @@ export default function ExpenseHistory() {
                 rounded-lg shadow-[3px_3px_0_#000] hover:shadow-[4px_4px_0_var(--mission-primary)]
                 transition-all duration-150 px-6 py-5 flex flex-col w-[90%] sm:w-[70%] md:w-[60%] lg:w-[50%]`}
             >
-              {/* 🔹 Barra superior */}
               <div className={`h-2 mb-3 w-full rounded-sm ${color}`}></div>
 
-              {/* 🔹 Descripción como título */}
               <div className="flex flex-wrap justify-between items-center mb-3 gap-2">
                 <h3 className="text-[15px] text-white font-bold leading-snug break-words flex-1">
                   {e.description || "Sin descripción"}
@@ -111,7 +108,6 @@ export default function ExpenseHistory() {
                 </span>
               </div>
 
-              {/* 🔹 Categoría y Fecha (responsive) */}
               <div className="flex flex-wrap justify-between items-center gap-2 text-[12px] text-white/70">
                 <span className={`uppercase ${color} px-2 py-[2px] rounded-sm text-black`}>
                   {label}

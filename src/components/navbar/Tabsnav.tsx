@@ -11,7 +11,7 @@ const items = [
   { tab: "tienda", label: "Tienda" },
   { tab: "inventario", label: "Inventario" },
   { tab: "arena", label: "Arena" },
-  { tab: "historial", label: "Historial" }
+  { tab: "historial", label: "Historial" },
 ];
 
 export default function Tabsnav() {
@@ -52,35 +52,33 @@ export default function Tabsnav() {
       </button>
 
       {open && (
-        <>
-          <div
-            className="fixed inset-0 bg-black/50 z-40"
-            onClick={() => setOpen(false)}
-          />
-          <div
-            className="absolute top-[120%] left-0 z-50 flex flex-col gap-1 bg-[var(--surface)] border border-[var(--grid)] p-2 w-40 rounded sm:hidden"
-          >
-            {items.map(({ tab, label }) => {
-              const href = tab === "panel" ? "/home" : `/home?tab=${tab}`;
-              const isActive = active === tab;
-              return (
-                <Link
-                  key={tab}
-                  href={href}
-                  onClick={() => setOpen(false)}
-                  className={[
-                    "px-2 py-1 text-xs font-medium border border-[var(--grid)] text-center rounded transition-all duration-150",
-                    isActive
-                      ? "bg-[var(--mission-primary)] text-black border-white"
-                      : "text-[var(--text-primary)] hover:bg-[var(--color-card)] hover:text-white",
-                  ].join(" ")}
-                >
-                  {label}
-                </Link>
-              );
-            })}
-          </div>
-        </>
+        <div
+          className="
+            absolute top-[100%] left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2
+            bg-[var(--color-navy)] border-2 border-[var(--grid)] p-3 w-52 rounded-md shadow-[2px_2px_0_var(--pixel-shadow)]
+            sm:hidden
+          "
+        >
+          {items.map(({ tab, label }) => {
+            const href = tab === "panel" ? "/home" : `/home?tab=${tab}`;
+            const isActive = active === tab;
+            return (
+              <Link
+                key={tab}
+                href={href}
+                onClick={() => setOpen(false)}
+                className={[
+                  "text-center text-sm font-medium py-3 rounded border-2 border-[var(--grid)] transition-all duration-150",
+                  isActive
+                    ? "bg-[var(--mission-primary)] text-black border-white shadow-[1px_1px_0_#000]"
+                    : "bg-[var(--color-navy)] text-white hover:bg-[var(--color-card)] hover:text-[var(--mission-primary)]",
+                ].join(" ")}
+              >
+                {label}
+              </Link>
+            );
+          })}
+        </div>
       )}
     </div>
   );
