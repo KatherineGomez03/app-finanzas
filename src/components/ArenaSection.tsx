@@ -1,8 +1,12 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Swords } from "lucide-react";
+
+// hooks reales
+import { useUserStats } from "@/hooks/useUserStats";
+import { useInventory } from "@/hooks/useInventory"; 
 
 /* ============ util fechas ============ */
 function daysToMonthEnd(d: Date = new Date()) {
@@ -18,7 +22,7 @@ function isLastDayOfMonth(d: Date = new Date()) {
   return d.getDate() === new Date(y, m + 1, 0).getDate();
 }
 
-/* ============ data enemigo ============ */
+/* ============ tipos y enemigo ============ */
 type Enemy = {
   nombre: string;
   nivel: number;
@@ -55,44 +59,21 @@ const ENEMIGOS_MENSUALES: Record<number, Enemy> = {
   },
 };
 
-/* ============ props ============ */
-type ArenaProps = {
-  player?: { nombre: string; maxHP: number; atk: number };
-};
-
-/* ============ barra HP al estilo misiones ============ */
-function HPBar({
-  label,
-  cur,
-  max,
-  fillClass = "bg-red-500",
-}: {
-  label: string;
-  cur: number;
-  max: number;
-  fillClass?: string;
-}) {
-  const pct = Math.max(0, Math.round((cur / max) * 100));
-  return (
-    <div>
-      <div className="text-xs opacity-80 mb-1">{label}</div>
-      <div className="hpbar">
-        <div className={`hpbar__fill ${fillClass}`} style={{ width: `${pct}%` }} />
-      </div>
-      <div className="text-xs opacity-60 mt-1">
-        {cur}/{max}
-      </div>
-    </div>
-  );
-}
-
-/* ============ arena ============ */
-export default function ArenaSection({ player }: ArenaProps = {}) {
+export default function ArenaSection() {
   const sp = useSearchParams();
   const forced = sp.get("forceBattle") === "1";
 
-  const playerBase = player ?? { nombre: "Tú", maxHP: 120, atk: 30 };
+  // 1) Stats reales
+  const { stats } = useUserStats(); // username, level, health, maxHealth, attack, ...
+  const maxHPReal = stats?.maxHealth ?? 120;
+  const atkReal = stats?.attack ?? 30;
 
+  // 2) Inventario real
+  const { qty, applyDelta, loading: invLoading } = useInventory();
+  const potsVida   = qty.pocion_vida ?? 0;
+  const potsVeneno = qty.pocion_veneno ?? 0;
+
+  // Enemigo del mes
   const hoy = new Date();
   const mes = hoy.getMonth();
   const enemigo = useMemo<Enemy>(() => ENEMIGOS_MENSUALES[mes] ?? ENEMIGOS_MENSUALES[0], [mes]);
@@ -100,18 +81,21 @@ export default function ArenaSection({ player }: ArenaProps = {}) {
   const diasRestantes = daysToMonthEnd(hoy);
   const hoyEsBatalla = forced || isLastDayOfMonth(hoy);
 
-  const [playerHP, setPlayerHP] = useState<number>(playerBase.maxHP);
+  // Estados que se sincronizan con stats/enemigo
+  const [playerHP, setPlayerHP] = useState<number>(maxHPReal);
   const [bossHP, setBossHP] = useState<number>(enemigo.maxHP);
   const [turno, setTurno] = useState<"tú" | "enemigo">("tú");
   const [log, setLog] = useState<string[]>([]);
   const [ended, setEnded] = useState<boolean>(false);
 
-  const [potsVida, setPotsVida] = useState<number>(0);
-  const [potsVeneno, setPotsVeneno] = useState<number>(0);
+  useEffect(() => {
+    setPlayerHP((maxHPReal) => Math.min( maxHPReal));
+    setBossHP(enemigo.maxHP);
+  }, [maxHPReal, enemigo.maxHP]);
 
   const appendLog = (line: string) => setLog((l) => [line, ...l].slice(0, 120));
   const reset = () => {
-    setPlayerHP(playerBase.maxHP);
+    setPlayerHP(maxHPReal);
     setBossHP(enemigo.maxHP);
     setTurno("tú");
     setEnded(false);
@@ -125,7 +109,8 @@ export default function ArenaSection({ player }: ArenaProps = {}) {
   };
 
   function enemyStrike() {
-    const name = enemigo.habilidades[Math.floor(Math.random() * enemigo.habilidades.length)] ?? "ataque";
+    const name =
+      enemigo.habilidades[Math.floor(Math.random() * enemigo.habilidades.length)] ?? "ataque";
     let dmg = roll(enemigo.atk);
     if (/(mordisco|aliento)/i.test(name)) dmg = Math.round(dmg * 1.15);
     return { name, dmg };
@@ -149,7 +134,7 @@ export default function ArenaSection({ player }: ArenaProps = {}) {
 
   function atacar() {
     if (!hoyEsBatalla || ended || turno !== "tú") return;
-    const dmg = roll(playerBase.atk);
+    const dmg = roll(atkReal);
     const nextBoss = Math.max(0, bossHP - dmg);
     setBossHP(nextBoss);
     appendLog(`🗡️ Tú golpeas por ${dmg}`);
@@ -161,25 +146,33 @@ export default function ArenaSection({ player }: ArenaProps = {}) {
     turnoEnemigo(playerHP);
   }
 
-  function usarPocionVida() {
+  async function usarPocionVida() {
     if (!hoyEsBatalla || ended || turno !== "tú") return;
+    if (invLoading) return;
     if (potsVida <= 0) return appendLog("⚠️ No tienes pociones de vida.");
+
     const heal = 25;
-    const next = Math.min(playerBase.maxHP, playerHP + heal);
+    const next = Math.min(maxHPReal, playerHP + heal);
     setPlayerHP(next);
-    setPotsVida((p) => p - 1);
-    appendLog(`🧪 Usas Poción de Vida (+${heal})`);
+    appendLog(`💚 Usas Poción de Vida (+${heal})`);
+    try {
+      await applyDelta({ pocion_vida: -1 });
+    } catch {}
     turnoEnemigo(next);
   }
 
-  function usarPocionVeneno() {
+  async function usarPocionVeneno() {
     if (!hoyEsBatalla || ended || turno !== "tú") return;
+    if (invLoading) return;
     if (potsVeneno <= 0) return appendLog("⚠️ No tienes pociones de veneno.");
+
     const poison = 18;
     const nextBoss = Math.max(0, bossHP - poison);
     setBossHP(nextBoss);
-    setPotsVeneno((p) => p - 1);
     appendLog(`☠️ Usas Veneno (-${poison} HP enemigo)`);
+    try {
+      await applyDelta({ pocion_veneno: -1 });
+    } catch {}
     if (nextBoss <= 0) {
       setEnded(true);
       appendLog("🎉 ¡Victoria! Recompensas: " + enemigo.recompensas.join(", "));
@@ -192,12 +185,14 @@ export default function ArenaSection({ player }: ArenaProps = {}) {
     <section className="space-y-4 md:space-y-6 px-2 md:px-4 py-4">
       {/* Título */}
       <h2 className="text-mission-primary flex items-center gap-2 text-sm md:text-base mb-2 md:mb-4 font-retro">
-        <span className="inline-block align-middle" aria-hidden="true">🗡️</span>
+        <Swords className="h-4 w-4 md:h-5 md:w-5" aria-hidden="true" />
         ARENA DE COMBATE
       </h2>
       <div className="text-[11px] md:text-xs opacity-70 flex items-center gap-2">
         <span className="badge badge-outline">Beta</span>
-        <span className="leading-tight">Enfréntate a los enemigos del ahorro y demuestra tu valor</span>
+        <span className="leading-tight">
+          Enfréntate a los enemigos del ahorro y demuestra tu valor
+        </span>
       </div>
 
       {/* Countdown */}
@@ -216,18 +211,18 @@ export default function ArenaSection({ player }: ArenaProps = {}) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
         {/* usuario */}
         <div className="mission-panel p-3 md:p-4">
-          <div className="font-medium mb-2 text-sm md:text-base">🗡️ {playerBase.nombre ?? "Tú"}</div>
+          <div className="font-medium mb-2 text-sm md:text-base">🗡️ Tú</div>
           <div className="text-[11px] md:text-xs opacity-80 mb-1">VIDA (Tú)</div>
           <div className="hpbar h-3 md:h-3.5">
             <div
               className="hpbar__fill"
-              style={{ width: `${Math.round((playerHP / playerBase.maxHP) * 100)}%` }}
+              style={{ width: `${Math.round((playerHP / maxHPReal) * 100)}%` }}
             />
           </div>
           <div className="text-[11px] md:text-xs opacity-60 mt-1">
-            {playerHP}/{playerBase.maxHP}
+            {playerHP}/{maxHPReal}
           </div>
-          <div className="text-xs md:text-sm mt-2">ATK: {playerBase.atk}</div>
+          <div className="text-xs md:text-sm mt-2">ATK: {atkReal}</div>
         </div>
 
         {/* Enemigo */}
