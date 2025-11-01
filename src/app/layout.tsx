@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 
 import { UserUpdateProvider } from "../context/UserUpdateContext"
+import PWAPrompt from "@/components/PWA";
 
 // Tipografía retro pixelada
 const pressStart = localFont({
@@ -46,6 +47,7 @@ export default function RootLayout({
       >
         <UserUpdateProvider>
           {children}
+          <PWAPrompt />
         </UserUpdateProvider>
       </body>
     </html>
