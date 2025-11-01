@@ -1,85 +1,112 @@
-'use client';
+import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { useCallback, useEffect, useState } from 'react';
+export type InvKey = "pocion_vida" | "pocion_veneno" | "antidoto";
 
-export type Qty = {
+export type InventoryCounts = {
   pocion_vida: number;
   pocion_veneno: number;
   antidoto: number;
 };
 
-const EMPTY: Qty = { pocion_vida: 0, pocion_veneno: 0, antidoto: 0 };
+type ApiInventoryDoc = {
+  userId: string;
+  items: { itemKey: InvKey; qty: number }[];
+};
 
-/**
- * Lee el inventario del usuario desde las rutas /api/inventory 
- * y expone un applyDelta para descontar/añadir cantidades.
- * Si las rutas cambian  ajustá los fetch.
- */
+type Delta = Partial<Record<InvKey, number>>;
+
 export function useInventory() {
-  const [qty, setQty] = useState<Qty>(EMPTY);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string>();
+  const [counts, setCounts] = useState<InventoryCounts | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
 
-  const userId =
-    typeof window !== 'undefined' ? localStorage.getItem('userid') : null;
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") ?? "" : "";
+  const userId = typeof window !== "undefined" ? localStorage.getItem("userid") ?? "" : "";
 
-  const load = useCallback(async () => {
-    if (!userId) {
-      setQty(EMPTY);
-      return;
+  const backend = process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:3001";
+
+  const mapToCounts = useCallback((doc: ApiInventoryDoc): InventoryCounts => {
+    // arr -> objeto fijo con 0s
+    const base: InventoryCounts = { pocion_vida: 0, pocion_veneno: 0, antidoto: 0 };
+    for (const it of doc.items) {
+      base[it.itemKey] = it.qty;
     }
-    setLoading(true);
-    try {
-      // ↳ usa las rutas del front (route handler) que ya tenés
-      const res = await fetch(`/api/inventory?userId=${encodeURIComponent(userId)}`);
-      const data = await res.json();
+    return base;
+  }, []);
 
-      // Normalizo estructura: soporta { items: { sku: { qty }}} ó { sku: qty }
-      const inv = data?.items ?? data ?? {};
-      const next: Qty = {
-        pocion_vida: inv['pocion_vida']?.qty ?? inv['pocion_vida'] ?? 0,
-        pocion_veneno: inv['pocion_veneno']?.qty ?? inv['pocion_veneno'] ?? 0,
-        antidoto: inv['antidoto']?.qty ?? inv['antidoto'] ?? 0,
-      };
-      setQty(next);
-    } catch (e: any) {
-      setError(e?.message ?? String(e));
+  const fetchInventory = useCallback(async () => {
+    if (!userId || !token) return;
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch(`${backend}/api/inventory?userId=${encodeURIComponent(userId)}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = (await res.json()) as { doc: ApiInventoryDoc } | ApiInventoryDoc;
+      const doc = "doc" in data ? data.doc : data;
+      setCounts(mapToCounts(doc));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
     } finally {
       setLoading(false);
     }
-  }, [userId]);
+  }, [backend, mapToCounts, token, userId]);
 
   useEffect(() => {
-    load();
-  }, [load]);
+    void fetchInventory();
+  }, [fetchInventory]);
 
-  /**
-   * Aplica delta y actualiza
-   * Ej: applyDelta({ pocion_vida: -1 })
-   */
-  const applyDelta = useCallback(
-    async (delta: Partial<Qty>) => {
-      if (!userId) return;
-      try {
-        await fetch(`/api/inventory?userId=${encodeURIComponent(userId)}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(delta),
-        });
-        setQty(prev => ({
-          pocion_vida: Math.max(0, prev.pocion_vida + (delta.pocion_vida ?? 0)),
-          pocion_veneno: Math.max(
-            0,
-            prev.pocion_veneno + (delta.pocion_veneno ?? 0),
-          ),
-          antidoto: Math.max(0, prev.antidoto + (delta.antidoto ?? 0)),
-        }));
-      } catch {
-        // si falla, nos quedamos como estábamos, el back será la fuente de verdad al recargar
-      }
+  const qty = useCallback(
+    (key: InvKey): number => {
+      if (!counts) return 0;
+      return counts[key] ?? 0;
     },
-    [userId],
+    [counts]
   );
 
-  return { qty, loading, error, applyDelta };
+  const applyDelta = useCallback(
+    async (delta: Delta): Promise<void> => {
+      if (!userId || !token) return;
+      // Optimistic update
+      setCounts((prev) => {
+        const cur = prev ?? { pocion_vida: 0, pocion_veneno: 0, antidoto: 0 };
+        const next: InventoryCounts = {
+          pocion_vida: cur.pocion_vida + (delta.pocion_vida ?? 0),
+          pocion_veneno: cur.pocion_veneno + (delta.pocion_veneno ?? 0),
+          antidoto: cur.antidoto + (delta.antidoto ?? 0),
+        };
+        return next;
+      });
+
+      try {
+        await fetch(`${backend}/api/inventory?userId=${encodeURIComponent(userId)}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            changes: [
+              { itemKey: "pocion_vida", qty: delta.pocion_vida ?? 0 },
+              { itemKey: "pocion_veneno", qty: delta.pocion_veneno ?? 0 },
+              { itemKey: "antidoto", qty: delta.antidoto ?? 0 },
+            ],
+          }),
+        });
+      } catch (e) {
+        // si falla, re-sync del server
+        await fetchInventory();
+        throw e;
+      }
+    },
+    [backend, token, userId, fetchInventory]
+  );
+
+  return {
+    loading,
+    error,
+    counts,
+    qty,
+    applyDelta,
+  };
 }

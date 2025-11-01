@@ -1,82 +1,43 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React from "react";
 import { Package } from "lucide-react";
+import { useInventory, InvKey } from "@/hooks/useInventory";
 
-type InvKey = "potsVida" | "potsVeneno" | "antidoto";
-type Item = {
+type Card = {
   key: InvKey;
-  name: string;
+  title: string;
   desc: string;
   icon: string;
-  accent?: string;
+  accent: string;
 };
 
-const ITEMS: Item[] = [
+const CARDS: Card[] = [
   {
-    key: "potsVida",
-    name: "Poción de Vida",
+    key: "pocion_vida",
+    title: "Poción de Vida",
     desc: "Restaura 25 HP en Arena.",
     icon: "💚",
     accent: "border-emerald-300",
   },
   {
-    key: "potsVeneno",
-    name: "Poción de Veneno",
+    key: "pocion_veneno",
+    title: "Poción de Veneno",
     desc: "Inflige 18 de daño al enemigo.",
     icon: "☠️",
     accent: "border-purple-300",
   },
   {
     key: "antidoto",
-    name: "Antídoto",
+    title: "Antídoto",
     desc: "Limpia efectos negativos.",
     icon: "🧪",
     accent: "border-cyan-300",
   },
 ];
 
-type InventoryDoc = {
-  userId: string;
-  itemKey: InvKey;
-  qty: number;
-};
-
-function getUserId() {
-  if (typeof window === "undefined") return "";
-  return localStorage.getItem("userid") || ""; // <— cambiar si usan otro key
-}
-
 export default function InventoryPage() {
-  const [rows, setRows] = useState<InventoryDoc[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  // mapa {key -> qty}
-  const qtyByKey = useMemo(() => {
-    const out: Record<InvKey, number> = { potsVida: 0, potsVeneno: 0, antidoto: 0 };
-    for (const r of rows) out[r.itemKey] = r.qty;
-    return out;
-  }, [rows]);
-
-  useEffect(() => {
-    let mounted = true;
-    (async () => {
-      try {
-        setLoading(true);
-        const userId = getUserId();
-        const res = await fetch(`/api/inventory?userId=${encodeURIComponent(userId)}`);
-        const data: InventoryDoc[] = await res.json();
-        if (mounted) setRows(Array.isArray(data) ? data : []);
-      } catch {
-        if (mounted) setRows([]);
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    })();
-    return () => {
-      mounted = false;
-    };
-  }, []);
+  const { loading, error, qty } = useInventory();
 
   return (
     <section className="space-y-6 px-2 md:px-4 py-4">
@@ -85,42 +46,36 @@ export default function InventoryPage() {
         INVENTARIO
       </h2>
 
+      {error && <div className="text-red-400 text-sm">Error: {error}</div>}
+      {loading && <div className="text-xs opacity-80">Cargando inventario...</div>}
+
       <div className="grid md:grid-cols-2 gap-4">
-        <div className="bg-card rounded-lg border-2 border-green-500 p-4 shadow-md relative">
-          <div className="text-base font-semibold text-green-500 flex items-center gap-2">
-            💚 Poción de Vida
-            {!loading && (
-              <span className="badge badge-primary ml-2">
-                x{qtyByKey.potsVida}
-              </span>
-            )}
-          </div>
-          <div className="text-sm py-2 mt-1">Restaura 25 HP en Arena.</div>
-        </div>
+        {CARDS.map((c) => {
+          const n = qty(c.key);
+          const empty = n <= 0;
+          return (
+            <div key={c.key} className={`bg-card rounded-lg border-2 p-4 shadow-md ${c.accent}`}>
+              <div className="flex items-center justify-between">
+                <div className="text-base font-semibold flex items-center gap-2">
+                  <span aria-hidden="true">{c.icon}</span> {c.title}
+                </div>
+                <span className={`badge ${empty ? "opacity-60" : "badge-primary"}`}>{n} u.</span>
+              </div>
 
-        <div className="bg-card rounded-lg border-2 border-purple-500 p-4 shadow-md relative">
-          <div className="text-base font-semibold text-purple-500 flex items-center gap-2">
-            ☠️ Poción de Veneno
-            {!loading && (
-              <span className="badge badge-primary ml-2">
-                x{qtyByKey.potsVeneno}
-              </span>
-            )}
-          </div>
-          <div className="text-sm py-2 mt-1">Inflige 18 de daño al enemigo.</div>
-        </div>
+              <div className="text-sm py-2 mt-1 opacity-90">{c.desc}</div>
 
-        <div className="bg-card rounded-lg border-2 border-blue-500 p-4 shadow-md relative">
-          <div className="text-base font-semibold text-blue-500 flex items-center gap-2">
-            🧪 Antídoto
-            {!loading && (
-              <span className="badge badge-primary ml-2">
-                x{qtyByKey.antidoto}
-              </span>
-            )}
-          </div>
-          <div className="text-sm py-2 mt-1">Limpia efectos negativos.</div>
-        </div>
+              {empty ? (
+                <div className="text-[11px] opacity-70 mt-1">
+                  No tenés {c.title.toLowerCase()} por ahora.
+                </div>
+              ) : (
+                <div className="text-[11px] opacity-70 mt-1">
+                  Usable solo dentro de <b>Arena</b>.
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </section>
   );
