@@ -2,14 +2,15 @@ import React, { JSX, useState } from "react";
 import { ItemCardProps, Rarity, Category } from "./cosas/shop"
 import { Sword, Shield, Heart, Star } from "lucide-react";
 import { useUserStats } from "@/hooks/useUserStats";
+import { useUpdateCoins } from "@/hooks/useCoins";
+import { useInternalTransaction } from "@/hooks/useInternalTransaction";
+
 
 const rarityColors: Record<Rarity, string> = {
   Común: "bg-gray-800 border-gray-600 text-gray-200 bg-opacity-60",
   Raro: "rarity-raro",
   Legendario: "rarity-legendario",
 };
-
-
 
 const getCategoryIcon = (category: Category): JSX.Element => {
   switch (category) {
@@ -25,6 +26,7 @@ const getCategoryIcon = (category: Category): JSX.Element => {
 };
 
 export const ItemCard: React.FC<ItemCardProps> = ({
+  id,
   name,
   rarity,
   description,
@@ -35,12 +37,17 @@ export const ItemCard: React.FC<ItemCardProps> = ({
 }) => {
   const [rpgMessage, setRpgMessage] = useState("");
   const user = useUserStats();
+  const coins = useUpdateCoins();
+  const transaction = useInternalTransaction();
   const canAfford = (user?.stats?.coins ?? 0) >= price;
 
   const handleBuy = () => {
     if (!canAfford) return; // evita clic si no tiene suficiente
     setRpgMessage(`¡Compraste ${name} por ${price} 🔥!`);
     setTimeout(() => setRpgMessage(""), 2000);
+    const update = price * (-1);
+    coins.updateCoins(update);
+    transaction.createTransaction(id, price);
   };
 
   return (
@@ -108,3 +115,4 @@ export const ItemCard: React.FC<ItemCardProps> = ({
     </>
   );
 };
+

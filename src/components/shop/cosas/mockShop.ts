@@ -13,7 +13,7 @@ export const mockShop: ItemCardProps[] = [
         effect: "+5 Ataque",
         price: 50,
         category: "Armas",
-        onBuy: () => window.alert("Compraste la Espada de Hierro"),
+        id: "69064d920a618efc6ca587e8"
     },
     {
         name: "Espada de Diamante",
@@ -22,7 +22,7 @@ export const mockShop: ItemCardProps[] = [
         effect: "+20 Ataque",
         price: 200,
         category: "Armas",
-        onBuy: () => window.alert("Compraste la Espada de Diamante"),
+        id: ""
     },
     {
         name: "Poción de Vida",
@@ -31,7 +31,7 @@ export const mockShop: ItemCardProps[] = [
         effect: "+50 Vida",
         price: 25,
         category: "Consumibles",
-        onBuy: () => window.alert("Compraste la Poción de Vida"),
+        id: ""
     },
     {
         name: "Escudo Mágico",
@@ -40,6 +40,6 @@ export const mockShop: ItemCardProps[] = [
         effect: "+10 Defensa",
         price: 100,
         category: "Armaduras",
-        onBuy: () => window.alert("Compraste el Escudo Mágico"),
+        id: ""
     },
 ];
