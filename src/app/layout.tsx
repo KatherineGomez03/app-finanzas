@@ -26,6 +26,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Monevo",
   description: "Accede al reino financiero",
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({

@@ -1,0 +1,15 @@
+{
+    "name": "Monevo: money evolution",
+    "short_name": "Monevo",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#0e1424",
+    "theme_color": "#000000",
+    "icons": [
+        {
+            "src": "icons/icon-512x512.png.jpg",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
