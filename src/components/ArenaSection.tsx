@@ -65,13 +65,12 @@ export default function ArenaSection({ player }: ArenaProps) {
   const sp = useSearchParams();
   const forced = sp.get("forceBattle") === "1";
 
-  // 1) Stats reales del usuario (fallbacks)
+  // 1) Stats reales del usuario
   const { stats } = useUserStats();
   const nombreReal = stats?.username ?? "Tú";
   const maxHPReal = stats?.maxHealth ?? 120;
   const atkReal = stats?.attack ?? 30;
 
-  // Si vienen props, tienen prioridad; si no, usamos stats reales; si no, defaults
   const playerBase: PlayerMini = {
     nombre: player?.nombre ?? nombreReal,
     maxHP: player?.maxHP ?? maxHPReal,
@@ -101,7 +100,7 @@ const potsVeneno = qty("pocion_veneno") ?? 0;
   const [log, setLog] = useState<string[]>([]);
   const [ended, setEnded] = useState<boolean>(false);
 
-  // Sincronizar cuando cambian stats/enemigo (ej: al loguear o cambiar de mes)
+  // Sincronizar cuando cambian stats/enemigo (ej al loguear o cambiar de mes)
   useEffect(() => {
     setPlayerHP(playerBase.maxHP);
     setBossHP(enemigo.maxHP);
@@ -177,7 +176,7 @@ const potsVeneno = qty("pocion_veneno") ?? 0;
     setPlayerHP(next);
     appendLog(`🧪 Usas Poción de Vida (+${heal})`);
 
-    // Descontar del inventario real (no bloquea la UI)
+    // Descontar del inventario real
     try {
       await applyDelta({ pocion_vida: -1, pocion_veneno: 0, antidoto: 0 });
     } catch {}

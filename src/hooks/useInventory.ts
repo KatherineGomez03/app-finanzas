@@ -26,7 +26,6 @@ export function useInventory() {
   const backend = process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:3001";
 
   const mapToCounts = useCallback((doc: ApiInventoryDoc): InventoryCounts => {
-    // arr -> objeto fijo con 0s
     const base: InventoryCounts = { pocion_vida: 0, pocion_veneno: 0, antidoto: 0 };
     for (const it of doc.items) {
       base[it.itemKey] = it.qty;
@@ -67,7 +66,6 @@ export function useInventory() {
   const applyDelta = useCallback(
     async (delta: Delta): Promise<void> => {
       if (!userId || !token) return;
-      // Optimistic update
       setCounts((prev) => {
         const cur = prev ?? { pocion_vida: 0, pocion_veneno: 0, antidoto: 0 };
         const next: InventoryCounts = {
