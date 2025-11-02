@@ -1,5 +1,6 @@
 "use client";
 import { useState, useCallback, useEffect } from "react";
+import { useUserUpdate } from '@/context/UserUpdateContext';
 
 export interface Challenge {
   _id: string;
@@ -24,6 +25,7 @@ export function useChallenge() {
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const { triggerUpdate } = useUserUpdate();
   
   const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000";
 
@@ -94,6 +96,32 @@ export function useChallenge() {
       setLoading(true);
       const headers = getHeaders();
 
+      // Primero actualizamos optimistamente
+      setChallenges(prev => {
+        return prev.map(challenge => {
+          if (challenge._id !== id) return challenge;
+          
+          const currentCount = challenge.progress?.count ?? challenge.count;
+          const targetCount = challenge.progress?.target ?? challenge.target;
+          const newCount = Math.min(currentCount + 1, targetCount);
+          const isComplete = newCount >= targetCount;
+
+          return {
+            ...challenge,
+            count: newCount,
+            progress: {
+              ...(challenge.progress || {}),
+              count: newCount,
+              target: targetCount,
+              completed: isComplete,
+              status: isComplete ? "completed" : "in-progress"
+            },
+            status: isComplete ? "completed" : challenge.status
+          };
+        });
+      });
+
+      // Luego hacemos la llamada a la API
       const res = await fetch(`${baseUrl}/challenges/${id}/increment`, {
         method: "PUT",
         headers,
@@ -105,20 +133,48 @@ export function useChallenge() {
       }
 
       const data = await res.json();
+      
+      // Actualizamos con la respuesta del servidor
+      const processedData = {
+        ...data,
+        progress: {
+          ...(data.progress || {}),
+          count: data.progress?.count ?? data.count,
+          target: data.progress?.target ?? data.target,
+          completed: false,
+          status: "in-progress"
+        }
+      };
+
+      const isNowCompleted = (processedData.progress.count >= processedData.progress.target);
+      
+      if (isNowCompleted) {
+        processedData.progress.completed = true;
+        processedData.progress.status = "completed";
+        processedData.status = "completed";
+
+        // Trigger user update when challenge is completed
+        triggerUpdate();
+      }
+
+      // Actualizamos el estado con la respuesta del servidor
       setChallenges(prev => 
         prev.map(challenge => 
-          challenge._id === id ? { ...challenge, ...data } : challenge
+          challenge._id === id ? processedData : challenge
         )
       );
-      return data;
+
+      return processedData;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : String(err);
       setError(new Error(errorMessage));
+      // Revertir el cambio optimista si hay error
+      fetchChallenges();
       return null;
     } finally {
       setLoading(false);
     }
-  }, [baseUrl, getHeaders]);
+  }, [baseUrl, getHeaders, fetchChallenges]);
 
   const completeChallenge = useCallback(async (id: string) => {
     try {
@@ -136,11 +192,25 @@ export function useChallenge() {
       }
 
       const data = await res.json();
+      
+      // Actualizamos el estado del desafío localmente con los datos del servidor
+      const updatedChallenge = {
+        ...data,
+        status: "completed",
+        progress: {
+          ...data.progress,
+          completed: true,
+          status: "completed"
+        }
+      };
+
       setChallenges(prev => 
         prev.map(challenge => 
-          challenge._id === id ? { ...challenge, status: "completed" } : challenge
+          challenge._id === id ? updatedChallenge : challenge
         )
       );
+
+
       return data;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : String(err);
