@@ -1,5 +1,6 @@
 "use client";
 import { useState, useCallback } from "react";
+import { useUserUpdate } from "../context/UserUpdateContext"; // 👈 IMPORTANTE
 
 export interface Challenge {
   _id: string;
@@ -14,13 +15,12 @@ export function useChallenge() {
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const { triggerUpdate } = useUserUpdate(); // 👈 usamos tu contexto global
 
-  // ✅ URL base segura para Vercel
   const baseURL =
     process.env.NEXT_PUBLIC_BACKEND_URL ||
     "https://app-finanza-back.onrender.com";
 
-  // ✅ Evita errores en SSR (localStorage no existe en el servidor)
   const getToken = () => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("token");
@@ -78,12 +78,14 @@ export function useChallenge() {
         });
 
         if (!res.ok) throw new Error("Error incrementando desafío");
-        await fetchChallenges();
+
+        await fetchChallenges(); // 🔄 actualiza lista de desafíos
+        triggerUpdate(); // 🪄 actualiza monedas en el header automáticamente
       } catch (err) {
         console.error("❌ Error incrementando desafío:", err);
       }
     },
-    [baseURL, fetchChallenges]
+    [baseURL, fetchChallenges, triggerUpdate]
   );
 
   return {
