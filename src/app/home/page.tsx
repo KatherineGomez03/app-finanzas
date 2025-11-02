@@ -26,10 +26,20 @@ function HomeContent() {
 
   const { stats, loading, error } = useUserStats();
 
-  if (loading)
-    return <p className="text-white font-pixel">Cargando estadísticas...</p>;
-  if (error || !stats)
-    return <p className="text-red-400 font-pixel">Error: {error}</p>;
+  const LoadingState = () => (
+    <div className="w-full h-full flex items-center justify-center">
+      <p className="text-white font-pixel">Cargando estadísticas...</p>
+    </div>
+  );
+
+  const ErrorState = () => (
+    <div className="w-full h-full flex items-center justify-center">
+      <p className="text-red-400 font-pixel">Error: {error}</p>
+    </div>
+  );
+
+  if (loading) return <LoadingState />;
+  if (error || !stats) return <ErrorState />;
 
   const onBuyGlobal = (item: { name: string; price: number }) => {
     console.log("Compra:", item.name, item.price);

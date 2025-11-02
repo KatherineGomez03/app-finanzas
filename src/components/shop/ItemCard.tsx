@@ -2,7 +2,7 @@ import React, { JSX, useState } from "react";
 import { ItemCardProps, Rarity, Category } from "./cosas/shop"
 import { Sword, Shield, Heart, Star } from "lucide-react";
 import { useUserStats } from "@/hooks/useUserStats";
-import { useUpdateCoins } from "@/hooks/useCoins";
+import { useUserUpdate } from "@/context/UserUpdateContext";
 import { useInternalTransaction } from "@/hooks/useInternalTransaction";
 
 
@@ -37,7 +37,7 @@ export const ItemCard: React.FC<ItemCardProps> = ({
 }) => {
   const [rpgMessage, setRpgMessage] = useState("");
   const user = useUserStats();
-  const coins = useUpdateCoins();
+  const { triggerUpdate } = useUserUpdate();
   const transaction = useInternalTransaction();
   const canAfford = (user?.stats?.coins ?? 0) >= price;
 
@@ -45,9 +45,9 @@ export const ItemCard: React.FC<ItemCardProps> = ({
     if (!canAfford) return; // evita clic si no tiene suficiente
     setRpgMessage(`¡Compraste ${name} por ${price} 🔥!`);
     setTimeout(() => setRpgMessage(""), 2000);
-    const update = price * (-1);
-    coins.updateCoins(update);
-    transaction.createTransaction(id, price);
+    transaction.createTransaction(id, price).then(() => {
+      triggerUpdate();
+    });
   };
 
   return (
