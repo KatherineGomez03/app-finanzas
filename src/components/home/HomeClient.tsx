@@ -15,8 +15,7 @@ import AdviceAI from "@/components/IA/AdviceAI";
 import InventoryPage from "@/components/inventory/InventoryPage";
 import { useUserStats } from "@/hooks/useUserStats";
 import { ShopContainer } from "@/components/shop/ShopContainer";
-import { ChallengeSectionActive } from "@/components/challenges/ChallengeSectionActive";
-import { ChallengeSectionCompleted } from "@/components/challenges/ChallengeSectionCompleted";
+
 import ExpenseHistory from "@/components/expenses/ExpenseHistory";
 
 export default function HomeClient() {
@@ -109,8 +108,7 @@ export default function HomeClient() {
       <main className="flex-1 pt-[300px] sm:pt-[300px]">
         {tab === "misiones" && (
           <div className="w-full mt-2 mb-6 ">
-            <ChallengeSectionActive />
-            <ChallengeSectionCompleted />
+            <ChallengeSection /> 
           </div>
         )}
 
@@ -147,7 +145,7 @@ export default function HomeClient() {
             <div className="mx-auto max-w-5xl px-4 mt-6">
               <AdviceAI />
             </div>
-            <ChallengeSectionActive />
+            
           </div>
         )}
       </main>

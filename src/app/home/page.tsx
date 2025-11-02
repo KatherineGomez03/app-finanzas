@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+
 "use client";
 
 import React, { Suspense } from "react";
@@ -16,7 +15,6 @@ import AdviceAI from "@/components/IA/AdviceAI";
 import InventoryPage from "@/components/inventory/InventoryPage";
 import { useUserStats } from "@/hooks/useUserStats";
 import { ShopContainer } from "@/components/shop/ShopContainer";
-
 import ExpenseHistory from "@/components/expenses/ExpenseHistory";
 import { ChallengeSection } from "@/components/challenges/ChallengeSection";
 
