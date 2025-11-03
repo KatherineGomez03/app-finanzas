@@ -136,15 +136,16 @@ export function useChallenge() {
       
       // Actualizamos con la respuesta del servidor
       const processedData = {
-        ...data,
-        progress: {
-          ...(data.progress || {}),
-          count: data.progress?.count ?? data.count,
-          target: data.progress?.target ?? data.target,
-          completed: false,
-          status: "in-progress"
-        }
-      };
+  ...data,
+  progress: {
+    count: data.progress?.count ?? data.count,
+    target: data.progress?.target ?? data.target,
+    completed: data.progress?.completed ?? data.count >= data.target,
+    status: data.progress?.status ?? (data.count >= data.target ? "completed" : "in-progress"),
+  },
+  status: data.status ?? (data.count >= data.target ? "completed" : "active"),
+};
+
 
       const isNowCompleted = (processedData.progress.count >= processedData.progress.target);
       

@@ -17,7 +17,8 @@ export function ChallengeSectionCompleted() {
 
   if (error) return <p className="text-center text-red-500">{error.message}</p>;
 
-  const completed = challenges.filter((c) => (c.count ?? 0) >= (c.target ?? 1));
+  const completed = challenges.filter((c) => c.progress?.completed);
+
 
   return (
     <div className="space-y-6 px-2 md:px-4 py-4">
