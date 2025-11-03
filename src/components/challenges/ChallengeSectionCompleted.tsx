@@ -19,7 +19,6 @@ export function ChallengeSectionCompleted() {
 
   const completed = challenges.filter((c) => c.progress?.completed);
 
-
   return (
     <div className="space-y-6 px-2 md:px-4 py-4">
       <div className="flex items-center justify-between">
