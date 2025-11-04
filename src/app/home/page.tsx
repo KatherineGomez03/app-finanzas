@@ -9,7 +9,6 @@ import { Header } from "@/components/header/Header";
 import Tabsnav from "@/components/navbar/Tabsnav";
 import ArenaSection from "@/components/ArenaSection";
 import { PanelContainer } from "@/components/panel/PanelContainer";
-import TestBalanceStatic from "@/components/balance/TestBalanceStatic";
 import ExpenseButton from "@/components/button/ExpenseButton";
 import LogoutButton from "@/components/button/LogoutButton";
 import AdviceAI from "@/components/IA/AdviceAI";
@@ -19,6 +18,7 @@ import { ShopContainer } from "@/components/shop/ShopContainer";
 import { ChallengeSectionActive } from "@/components/challenges/ChallengeSectionActive";
 import { ChallengeSectionCompleted } from "@/components/challenges/ChallengeSectionCompleted";
 import ExpenseHistory from "@/components/expenses/ExpenseHistory";
+import BalanceSection from "@/components/balance/BalanceSection";
 
 function HomeContent() {
   const sp = useSearchParams();
@@ -96,7 +96,7 @@ function HomeContent() {
           <div>
             <div className="m-2 max-w-170 flex flex-col gap-2 md:flex-row md:justify-around">
               <PanelContainer />
-              <TestBalanceStatic />
+              <BalanceSection />
             </div>
             <div className="mx-auto max-w-5xl px-4 mt-6">
               <AdviceAI />
