@@ -36,8 +36,6 @@ export const ItemCard: React.FC<ItemCardProps> = ({
 
 }) => {
   const [rpgMessage, setRpgMessage] = useState("");
-  const [isPurchased, setIsPurchased] = useState(false);
-
   const user = useUserStats();
   const { triggerUpdate } = useUserUpdate();
   const transaction = useInternalTransaction();
@@ -47,9 +45,9 @@ export const ItemCard: React.FC<ItemCardProps> = ({
     if (!canAfford) return; // evita clic si no tiene suficiente
     setRpgMessage(`¡Compraste ${name} por ${price} 🔥!`);
     setTimeout(() => setRpgMessage(""), 2000);
-    const update = price * (-1);
-    coins.updateCoins(update);
-    transaction.createTransaction(id, price);
+    transaction.createTransaction(id, price).then(() => {
+      triggerUpdate();
+    });
   };
 
   return (
@@ -102,22 +100,15 @@ export const ItemCard: React.FC<ItemCardProps> = ({
           </div>
           <button
             onClick={handleBuy}
-            disabled={!canAfford || isPurchased}
+            disabled={!canAfford}
             className={`px-3 py-1 border-2 rounded-md font-bold text-[12px] transition
-    ${isPurchased
-                ? "bg-green-600/80 cursor-default"
-                : canAfford
-                  ? "bg-blue-700/80 hover:bg-blue-700/100"
-                  : "bg-gray-500/50 cursor-not-allowed opacity-50"
+          ${canAfford
+                ? "bg-blue-700/80 hover:bg-blue-700/100"
+                : "bg-gray-500/50 cursor-not-allowed opacity-50"
               }`}
           >
-            {isPurchased
-              ? "ADQUIRIDO🎒"
-              : canAfford
-                ? "COMPRAR"
-                : "NO ALCANZA 💸"}
+            {canAfford ? "COMPRAR" : "NO ALCANZA 💸"}
           </button>
-
         </footer>
       </article>
 
