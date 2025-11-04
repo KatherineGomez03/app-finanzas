@@ -20,9 +20,11 @@ export function ChallengeCard({ challenge }: ChallengeCardProps) {
   }, [challenge]);
 
   const isComplete = useMemo(() => {
-    return localChallenge.status === "completed" || 
-           localChallenge.progress?.status === "completed" ||
-           localChallenge.progress?.completed === true;
+    return (
+      localChallenge.status === "completed" ||
+      localChallenge.progress?.status === "completed" ||
+      localChallenge.progress?.completed === true
+    );
   }, [localChallenge]);
 
   const handleClick = async () => {
@@ -30,10 +32,12 @@ export function ChallengeCard({ challenge }: ChallengeCardProps) {
 
     try {
       setLocalLoading(true);
-      
+
       // Actualizar inmediatamente el estado local
-      const currentCount = localChallenge.progress?.count ?? localChallenge.count;
-      const targetCount = localChallenge.progress?.target ?? localChallenge.target;
+      const currentCount =
+        localChallenge.progress?.count ?? localChallenge.count;
+      const targetCount =
+        localChallenge.progress?.target ?? localChallenge.target;
       const newCount = Math.min(currentCount + 1, targetCount);
       const willComplete = newCount >= targetCount;
 
@@ -44,9 +48,9 @@ export function ChallengeCard({ challenge }: ChallengeCardProps) {
           count: newCount,
           target: targetCount,
           completed: willComplete,
-          status: willComplete ? "completed" : "in-progress"
+          status: willComplete ? "completed" : "in-progress",
         },
-        status: willComplete ? "completed" : localChallenge.status
+        status: willComplete ? "completed" : localChallenge.status,
       };
       setLocalChallenge(updatedChallenge);
 
@@ -61,8 +65,8 @@ export function ChallengeCard({ challenge }: ChallengeCardProps) {
             completed: true,
             status: "completed",
             count: localChallenge.progress?.count ?? localChallenge.count,
-            target: localChallenge.progress?.target ?? localChallenge.target
-          }
+            target: localChallenge.progress?.target ?? localChallenge.target,
+          },
         };
         setLocalChallenge(completedChallenge);
       }
@@ -82,7 +86,7 @@ export function ChallengeCard({ challenge }: ChallengeCardProps) {
       count,
       target,
       percentage: (count / target) * 100,
-      isComplete: count >= target
+      isComplete: count >= target,
     };
   }, [localChallenge]);
 
@@ -92,11 +96,7 @@ export function ChallengeCard({ challenge }: ChallengeCardProps) {
       text-[13px] leading-tight
       bg-[var(--color-card)] min-h-[240px] flex flex-col justify-between 
       transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_16px_rgba(0,255,255,0.4)]
-      ${
-        isComplete
-          ? "border-mission-success"
-          : "border-mission-primary"
-      }`}
+      ${isComplete ? "border-mission-success" : "border-mission-primary"}`}
     >
       <div className="flex justify-between items-start">
         <h3
@@ -126,18 +126,25 @@ export function ChallengeCard({ challenge }: ChallengeCardProps) {
               <button
                 onClick={handleClick}
                 disabled={loading || localLoading}
-                className={`w-[90px] h-[28px] font-bold text-[9px] uppercase tracking-wide
-                border-[2px] border-white rounded-sm
-                shadow-[2px_2px_0_#000] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]
-                transition-all duration-100 select-none
+                className={`w-[100px] h-[26px]
+                font-['PressStart2P'] text-[8px] uppercase tracking-wide
+                border border-cyan-400 rounded-sm
+                text-cyan-300
+                bg-[#04121d]
+                shadow-[0_0_6px_#0ff,inset_0_0_2px_#0ff]
+                select-none
                 ${
                   loading || localLoading
-                    ? "bg-gray-400 text-gray-800 cursor-not-allowed"
-                    : "bg-gradient-to-b from-blue-500 to-blue-600 text-white hover:brightness-110"
+                    ? "opacity-60 cursor-not-allowed"
+                    : "hover:brightness-125 active:translate-x-[1px] active:translate-y-[1px]"
                 }`}
               >
-                <Plus className={`w-3 h-3 inline-block mr-1 ${localLoading ? 'animate-spin' : ''}`} />
-                {localLoading ? 'Actualizando...' : 'Progreso'}
+                <span className="flex items-center justify-center gap-1">
+                  <Plus
+                    className={`w-3 h-3 ${localLoading ? "animate-spin" : ""}`}
+                  />
+                  {localLoading ? "..." : "Progreso"}
+                </span>
               </button>
             </>
           )}
