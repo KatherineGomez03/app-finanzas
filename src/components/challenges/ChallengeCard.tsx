@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Gift, Plus, Trophy } from "lucide-react";
 import { Badge } from "./Badge";
 import { ProgressBar } from "./ProgressBar";
@@ -11,26 +11,84 @@ interface ChallengeCardProps {
 
 export function ChallengeCard({ challenge }: ChallengeCardProps) {
   const { incrementChallenge, loading } = useChallenge();
-
+  const [localLoading, setLocalLoading] = useState(false);
   const [localChallenge, setLocalChallenge] = useState(challenge);
 
+  // Actualizar el estado local cuando cambia el challenge desde props
+  useEffect(() => {
+    setLocalChallenge(challenge);
+  }, [challenge]);
+
   const isComplete = useMemo(() => {
-    const count = Number(localChallenge.count ?? 0);
-    const target = Number(localChallenge.target ?? 1);
-    return target > 0 && count >= target;
+    return (
+      localChallenge.status === "completed" ||
+      localChallenge.progress?.status === "completed" ||
+      localChallenge.progress?.completed === true
+    );
   }, [localChallenge]);
 
   const handleClick = async () => {
-    if (isComplete || loading) return;
+    if (isComplete || localLoading || loading) return;
 
-    await incrementChallenge(localChallenge._id);
+    try {
+      setLocalLoading(true);
 
-    // actualizar localmente sin recargar
-    setLocalChallenge((prev) => ({
-      ...prev,
-      count: Math.min((prev.count ?? 0) + 1, prev.target),
-    }));
+      // Actualizar inmediatamente el estado local
+      const currentCount =
+        localChallenge.progress?.count ?? localChallenge.count;
+      const targetCount =
+        localChallenge.progress?.target ?? localChallenge.target;
+      const newCount = Math.min(currentCount + 1, targetCount);
+      const willComplete = newCount >= targetCount;
+
+      const updatedChallenge: Challenge = {
+        ...localChallenge,
+        count: newCount,
+        progress: {
+          count: newCount,
+          target: targetCount,
+          completed: willComplete,
+          status: willComplete ? "completed" : "in-progress",
+        },
+        status: willComplete ? "completed" : localChallenge.status,
+      };
+      setLocalChallenge(updatedChallenge);
+
+      // Llamar a la API
+      const result = await incrementChallenge(challenge._id);
+      if (result?.progress?.completed || result?.status === "completed") {
+        const completedChallenge: Challenge = {
+          ...localChallenge,
+          status: "completed",
+          progress: {
+            ...localChallenge.progress!,
+            completed: true,
+            status: "completed",
+            count: localChallenge.progress?.count ?? localChallenge.count,
+            target: localChallenge.progress?.target ?? localChallenge.target,
+          },
+        };
+        setLocalChallenge(completedChallenge);
+      }
+    } catch (error) {
+      console.error("Error incrementing challenge:", error);
+      // Revertir al estado original en caso de error
+      setLocalChallenge(challenge);
+    } finally {
+      setLocalLoading(false);
+    }
   };
+
+  const currentProgress = useMemo(() => {
+    const count = localChallenge.progress?.count ?? localChallenge.count;
+    const target = localChallenge.progress?.target ?? localChallenge.target;
+    return {
+      count,
+      target,
+      percentage: (count / target) * 100,
+      isComplete: count >= target,
+    };
+  }, [localChallenge]);
 
   return (
     <div
@@ -38,11 +96,7 @@ export function ChallengeCard({ challenge }: ChallengeCardProps) {
       text-[13px] leading-tight
       bg-[var(--color-card)] min-h-[240px] flex flex-col justify-between 
       transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_16px_rgba(0,255,255,0.4)]
-      ${
-        isComplete
-          ? "border-mission-success"
-          : "border-mission-primary"
-      }`}
+      ${isComplete ? "border-mission-success" : "border-mission-primary"}`}
     >
       <div className="flex justify-between items-start">
         <h3
@@ -50,7 +104,7 @@ export function ChallengeCard({ challenge }: ChallengeCardProps) {
             isComplete ? "text-mission-success" : "text-mission-primary"
           }`}
         >
-          {localChallenge.name}
+          {challenge.name}
         </h3>
 
         <div className="flex flex-col items-center gap-2">
@@ -66,24 +120,31 @@ export function ChallengeCard({ challenge }: ChallengeCardProps) {
                 border-[2px] border-white rounded-sm 
                 shadow-[2px_2px_0_#000] select-none"
               >
-                {localChallenge.count}/{localChallenge.target}
+                {currentProgress.count}/{currentProgress.target}
               </div>
 
               <button
                 onClick={handleClick}
-                disabled={loading}
-                className={`w-[90px] h-[28px] font-bold text-[9px] uppercase tracking-wide
-                border-[2px] border-white rounded-sm
-                shadow-[2px_2px_0_#000] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]
-                transition-all duration-100 select-none
+                disabled={loading || localLoading}
+                className={`w-[100px] h-[26px]
+                font-['PressStart2P'] text-[8px] uppercase tracking-wide
+                border border-cyan-400 rounded-sm
+                text-cyan-300
+                bg-[#04121d]
+                shadow-[0_0_6px_#0ff,inset_0_0_2px_#0ff]
+                select-none
                 ${
-                  loading
-                    ? "bg-gray-400 text-gray-800 cursor-not-allowed"
-                    : "bg-gradient-to-b from-blue-500 to-blue-600 text-white hover:brightness-110"
+                  loading || localLoading
+                    ? "opacity-60 cursor-not-allowed"
+                    : "hover:brightness-125 active:translate-x-[1px] active:translate-y-[1px]"
                 }`}
               >
-                <Plus className="w-3 h-3 inline-block mr-1" />
-                Progreso
+                <span className="flex items-center justify-center gap-1">
+                  <Plus
+                    className={`w-3 h-3 ${localLoading ? "animate-spin" : ""}`}
+                  />
+                  {localLoading ? "..." : "Progreso"}
+                </span>
               </button>
             </>
           )}
@@ -94,13 +155,13 @@ export function ChallengeCard({ challenge }: ChallengeCardProps) {
 
       {/* descripcion*/}
       <p className="text-white/90 text-[12px] mb-2 leading-snug text-justify">
-        {localChallenge.description}
+        {challenge.description}
       </p>
 
       {/*progreso*/}
       <ProgressBar
-        current={localChallenge.count}
-        max={localChallenge.target}
+        current={currentProgress.count}
+        max={currentProgress.target}
         color={isComplete ? "bg-mission-success" : "bg-mission-primary"}
       />
 
@@ -111,7 +172,7 @@ export function ChallengeCard({ challenge }: ChallengeCardProps) {
       >
         <Gift className="w-4 h-4 text-yellow-400" />
         <span>
-          {localChallenge.reward.coins} monedas + {localChallenge.reward.item}
+          {challenge.reward.coins} monedas + {challenge.reward.item}
         </span>
       </div>
     </div>

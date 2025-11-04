@@ -17,13 +17,8 @@ export function ChallengeSection() {
 
   if (error) return <p className="text-center text-red-500">{error.message}</p>;
 
-  // ignoramos status del backend, y determinamos el progreso localmente
-  const active = challenges.filter(
-    (c) => (c.count ?? 0) < (c.target ?? 1)
-  );
-  const completed = challenges.filter(
-    (c) => (c.count ?? 0) >= (c.target ?? 1)
-  );
+  const active = challenges.filter((c) => !c.progress?.completed);
+  const completed = challenges.filter((c) => c.progress?.completed);
 
   return (
     <div className="space-y-6 px-2 md:px-4 py-4">

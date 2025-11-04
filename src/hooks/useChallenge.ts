@@ -1,5 +1,7 @@
 "use client";
 import { useState, useCallback, useEffect } from "react";
+import { useUserUpdate } from "@/context/UserUpdateContext";
+import { useUploadExperience } from "@/hooks/useUploadExperience";
 
 export interface Challenge {
   _id: string;
@@ -12,133 +14,249 @@ export interface Challenge {
     item: string;
   };
   status?: "active" | "completed";
-  createdAt: string;
-  updatedAt: string;
+  progress?: {
+    count: number;
+    target: number;
+    completed: boolean;
+    status: string;
+  };
 }
 
 export function useChallenge() {
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const [currentUser, setCurrentUser] = useState<string | null>(null);
+  const { triggerUpdate } = useUserUpdate();
+  const { uploadExperience } = useUploadExperience();
 
-  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000";
+  const baseUrl =
+    process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000";
 
-  const getStorageKey = (userId: string) => `progress_${userId}`;
+  const getHeaders = useCallback(() => {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("Token no encontrado");
+    return {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    };
+  }, []);
 
-  // detecta usuario actual y cargar su progreso guardado
-  useEffect(() => {
-    const user = localStorage.getItem("userid");
-    if (user && user !== currentUser) {
-      console.log("👤 Usuario detectado:", user);
-      setCurrentUser(user);
-
-      // si hay progreso guardado, lo cargamos
-      const saved = localStorage.getItem(getStorageKey(user));
-      if (saved) {
-        console.log("📦 Cargando progreso local de", user);
-        setChallenges(JSON.parse(saved));
-      } else {
-        console.log("🆕 Nuevo usuario, sin progreso previo");
-        setChallenges((prev) =>
-          prev.map((c) => ({
-            ...c,
-            count: 0,
-          }))
-        );
-      }
-    }
-  }, [currentUser]);
-
-  // guardar progreso local cada vez que cambian los desafíos
-  useEffect(() => {
-    if (currentUser && challenges.length > 0) {
-      localStorage.setItem(getStorageKey(currentUser), JSON.stringify(challenges));
-    }
-  }, [challenges, currentUser]);
-
-  // obteniene misiones desde el back 
   const fetchChallenges = useCallback(async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem("token");
-      if (!token) throw new Error("Token no encontrado");
+      const headers = getHeaders();
 
-      const res = await fetch(`${API_URL}/challenges`, {
-        headers: { Authorization: `Bearer ${token}` },
+      const res = await fetch(`${baseUrl}/challenges`, {
+        headers,
       });
 
-      if (!res.ok) throw new Error("Error al obtener desafíos");
-
-      const data = await res.json();
-      const sanitized = Array.isArray(data)
-        ? data.map((c: unknown) => {
-            const cc = c as Record<string, unknown> & {
-              count?: unknown;
-              target?: unknown;
-            };
-            return {
-              ...cc,
-              count: Number(cc.count ?? 0),
-              target: Number(cc.target ?? 1),
-            } as unknown as Challenge;
-          })
-        : [];
-
-      // si hay usuario actual, intentamos recuperar su progreso local
-      const user = localStorage.getItem("userid");
-      if (user) {
-        const saved = localStorage.getItem(getStorageKey(user));
-        if (saved) {
-          console.log("🔁 Usando progreso local guardado para", user);
-          setChallenges(JSON.parse(saved));
-          return;
-        }
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.message || "Error al obtener desafíos");
       }
 
-      console.log(" Sin progreso local — inicializando desafíos limpios");
-      setChallenges(
-        sanitized.map((c) => ({
-          ...c,
-          count: 0,
-        }))
-      );
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err : new Error(String(err)));
+      const data = await res.json();
+      setChallenges(data);
+      return data;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      setError(new Error(errorMessage));
+      return [];
     } finally {
       setLoading(false);
     }
-  }, [API_URL]);
+  }, [baseUrl, getHeaders]);
 
- 
+  const initializeChallenges = useCallback(async () => {
+    try {
+      setLoading(true);
+      const headers = getHeaders();
+
+      const res = await fetch(`${baseUrl}/challenges/init`, {
+        method: "POST",
+        headers,
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.message || "Error al inicializar desafíos");
+      }
+
+      const data = await res.json();
+      setChallenges(data);
+      return data;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      setError(new Error(errorMessage));
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  }, [baseUrl, getHeaders]);
+
   const incrementChallenge = useCallback(
     async (id: string) => {
       try {
         setLoading(true);
-        const token = localStorage.getItem("token");
-        if (!token) throw new Error("Token no encontrado");
+        const headers = getHeaders();
 
-        await fetch(`${API_URL}/challenges/${id}/count`, {
-          method: "PUT",
-          headers: { Authorization: `Bearer ${token}` },
+        // Primero actualizamos optimistamente
+        setChallenges((prev) => {
+          return prev.map((challenge) => {
+            if (challenge._id !== id) return challenge;
+
+            const currentCount = challenge.progress?.count ?? challenge.count;
+            const targetCount = challenge.progress?.target ?? challenge.target;
+            const newCount = Math.min(currentCount + 1, targetCount);
+            const isComplete = newCount >= targetCount;
+
+            return {
+              ...challenge,
+              count: newCount,
+              progress: {
+                ...(challenge.progress || {}),
+                count: newCount,
+                target: targetCount,
+                completed: isComplete,
+                status: isComplete ? "completed" : "in-progress",
+              },
+              status: isComplete ? "completed" : challenge.status,
+            };
+          });
         });
 
-        // actualizamos localmente el progreso del usuario
+        // Luego hacemos la llamada a la API
+        const res = await fetch(`${baseUrl}/challenges/${id}/increment`, {
+          method: "PUT",
+          headers,
+        });
+
+        if (!res.ok) {
+          const error = await res.json();
+          throw new Error(error.message || "Error al actualizar progreso");
+        }
+
+        const data = await res.json();
+
+        // Actualizamos con la respuesta del servidor
+        const processedData = {
+          ...data,
+          progress: {
+            count: data.progress?.count ?? data.count,
+            target: data.progress?.target ?? data.target,
+            completed: data.progress?.completed ?? data.count >= data.target,
+            status:
+              data.progress?.status ??
+              (data.count >= data.target ? "completed" : "in-progress"),
+          },
+          status:
+            data.status ?? (data.count >= data.target ? "completed" : "active"),
+        };
+
+        const isNowCompleted =
+          processedData.progress.count >= processedData.progress.target;
+
+        if (isNowCompleted) {
+          processedData.progress.completed = true;
+          processedData.progress.status = "completed";
+          processedData.status = "completed";
+
+          // Trigger user update when challenge is completed
+          triggerUpdate();
+          try {
+            const experienceGain = 50;
+            await uploadExperience(experienceGain);
+            console.log(`🎯 +${experienceGain}% de experiencia otorgada`);
+          } catch (expErr) {
+            console.error("⚠️ Error al subir experiencia:", expErr);
+          }
+        }
+
+        // Actualizamos el estado con la respuesta del servidor
         setChallenges((prev) =>
-          prev.map((c) =>
-            c._id === id
-              ? { ...c, count: Math.min(c.count + 1, c.target) }
-              : c
+          prev.map((challenge) =>
+            challenge._id === id ? processedData : challenge
           )
         );
+
+        return processedData;
       } catch (err) {
-        setError(err as Error);
+        const errorMessage = err instanceof Error ? err.message : String(err);
+        setError(new Error(errorMessage));
+        // Revertir el cambio optimista si hay error
+        fetchChallenges();
+        return null;
       } finally {
         setLoading(false);
       }
     },
-    [API_URL]
+    [baseUrl, getHeaders, fetchChallenges]
   );
 
-  return { challenges, loading, error, fetchChallenges, incrementChallenge };
+  const completeChallenge = useCallback(
+    async (id: string) => {
+      try {
+        setLoading(true);
+        const headers = getHeaders();
+
+        const res = await fetch(`${baseUrl}/challenges/${id}/complete`, {
+          method: "PUT",
+          headers,
+        });
+
+        if (!res.ok) {
+          const error = await res.json();
+          throw new Error(error.message || "Error al completar desafío");
+        }
+
+        const data = await res.json();
+
+        // Actualizamos el estado del desafío localmente con los datos del servidor
+        const updatedChallenge = {
+          ...data,
+          status: "completed",
+          progress: {
+            ...data.progress,
+            completed: true,
+            status: "completed",
+          },
+        };
+
+        setChallenges((prev) =>
+          prev.map((challenge) =>
+            challenge._id === id ? updatedChallenge : challenge
+          )
+        );
+
+        return data;
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : String(err);
+        setError(new Error(errorMessage));
+        return null;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [baseUrl, getHeaders]
+  );
+
+  useEffect(() => {
+    const init = async () => {
+      const challenges = await fetchChallenges();
+      if (challenges.length === 0) {
+        await initializeChallenges();
+      }
+    };
+    init();
+  }, [fetchChallenges, initializeChallenges]);
+
+  return {
+    challenges,
+    loading,
+    error,
+    fetchChallenges,
+    incrementChallenge,
+    completeChallenge,
+    initializeChallenges,
+  };
 }
