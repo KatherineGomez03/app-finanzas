@@ -8,7 +8,11 @@ export default function PWAPrompt() {
     const { isInstallable, promptInstall } = usePWA();
 
     useEffect(() => {
-        const alreadyShown = sessionStorage.getItem("pwaPromptShown");
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        const key = `pwaPromptShown_${token}`;
+        const alreadyShown = sessionStorage.getItem(key);
 
         if (isInstallable && !alreadyShown) {
             Swal.fire({
@@ -23,18 +27,18 @@ export default function PWAPrompt() {
                 confirmButtonColor: "#22c55e",
                 cancelButtonColor: "#444",
                 backdrop: `
-          rgba(0,0,0,0.6)
-          left top
-          no-repeat
-        `,
+                    rgba(0,0,0,0.6)
+                    left top
+                    no-repeat
+                `,
             }).then((result) => {
                 if (result.isConfirmed) {
                     promptInstall();
                 }
             });
-        }
 
-        sessionStorage.setItem("pwaPromptShown", "true");
+            sessionStorage.setItem(key, "true");
+        }
     }, [isInstallable, promptInstall]);
 
     return null;
