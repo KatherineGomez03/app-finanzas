@@ -8,7 +8,9 @@ export default function PWAPrompt() {
     const { isInstallable, promptInstall } = usePWA();
 
     useEffect(() => {
-        if (isInstallable) {
+        const alreadyShown = sessionStorage.getItem("pwaPromptShown");
+
+        if (isInstallable && !alreadyShown) {
             Swal.fire({
                 title: "📱 ¡Instalá la App!",
                 text: "Accedé más rápido desde tu pantalla principal.",
@@ -31,7 +33,10 @@ export default function PWAPrompt() {
                 }
             });
         }
+
+        sessionStorage.setItem("pwaPromptShown", "true");
     }, [isInstallable, promptInstall]);
 
     return null;
 }
+
