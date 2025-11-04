@@ -12,7 +12,7 @@ type Expense = {
     tags: string[];
 };
 
-type ExpenseCategory = {
+export type ExpenseCategory = {
     category: string;
     amount: number;
     color: string;
@@ -115,4 +115,5 @@ function formatCategoryName(category: string): string {
     };
     return names[category] || category;
 }
+
 

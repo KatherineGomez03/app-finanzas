@@ -10,7 +10,8 @@ import {
     Tooltip,
     Legend,
 } from "chart.js";
-import { useUserExpenses } from "@/hooks/useUserExpenses";
+import { useUserExpenses, } from "@/hooks/useUserExpenses";
+import type { ExpenseCategory } from "@/hooks/useUserExpenses";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
@@ -26,7 +27,7 @@ export default function BalanceSection() {
         "Otros",
     ];
 
-    const sumByCategory = (data: any[], category: string) =>
+    const sumByCategory = (data: ExpenseCategory[], category: string) =>
         data.find((d) => d.category === category)?.amount || 0;
 
     const chartData = {
