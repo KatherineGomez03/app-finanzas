@@ -4,6 +4,7 @@ import { mockShop } from "./cosas/mockShop";
 import { CategoryTabs } from "./CategoryTabs";
 import { ItemCard } from "./ItemCard";
 import { Store } from "lucide-react";
+import { useItems } from "@/hooks/useItems";
 
 
 interface ShopContainerProps {
@@ -13,9 +14,9 @@ interface ShopContainerProps {
 }
 
 export const ShopContainer: React.FC<ShopContainerProps> = ({
-    items = mockShop,
     categories,
 }) => {
+    const { items, loading, error } = useItems();
     const [selectedCategory, setSelectedCategory] = useState<string>("Todos");
 
     const filtered = useMemo(() => {
