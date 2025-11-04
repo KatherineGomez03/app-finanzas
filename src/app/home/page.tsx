@@ -55,7 +55,7 @@ function HomeContent() {
             <Tabsnav />
             <ExpenseButton />
             <LogoutButton />
-            <span className="absolute bottom-0 left-0 w-full h-[2px] bg-cyan-400 shadow-[0_0_10px_#00ffff]" />
+            <span className="absolute bottom-0 left-0 w-full h-[2px] bg-[var(--color-coin-bright)]" />
           </nav>
         </div>
       </header>
