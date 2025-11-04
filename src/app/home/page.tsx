@@ -9,7 +9,6 @@ import { Header } from "@/components/header/Header";
 import Tabsnav from "@/components/navbar/Tabsnav";
 import ArenaSection from "@/components/ArenaSection";
 import { PanelContainer } from "@/components/panel/PanelContainer";
-import TestBalanceStatic from "@/components/balance/TestBalanceStatic";
 import ExpenseButton from "@/components/button/ExpenseButton";
 import LogoutButton from "@/components/button/LogoutButton";
 import AdviceAI from "@/components/IA/AdviceAI";
