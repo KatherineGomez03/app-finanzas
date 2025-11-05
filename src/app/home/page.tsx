@@ -19,6 +19,7 @@ import { ChallengeSectionActive } from "@/components/challenges/ChallengeSection
 import { ChallengeSectionCompleted } from "@/components/challenges/ChallengeSectionCompleted";
 import ExpenseHistory from "@/components/expenses/ExpenseHistory";
 import BalanceSection from "@/components/balance/BalanceSection";
+import EquipContainer from "@/components/inventory/EquipContainer";
 
 function HomeContent() {
   const sp = useSearchParams();
@@ -40,11 +41,6 @@ function HomeContent() {
 
   if (loading) return <LoadingState />;
   if (error || !stats) return <ErrorState />;
-
-  const onBuyGlobal = (item: { name: string; price: number }) => {
-    console.log("Compra:", item.name, item.price);
-    window.alert(`Has comprado ${item.name} por ${item.price}`);
-  };
 
   return (
     <div className="mx-4 text-white min-h-screen bg-[var(--back)] flex flex-col">
@@ -82,13 +78,13 @@ function HomeContent() {
 
         {tab === "tienda" && (
           <div className="w-full mt-2 mb-6">
-            <ShopContainer onBuyItem={onBuyGlobal} />
+            <ShopContainer />
           </div>
         )}
 
         {tab === "inventario" && (
           <div className="w-full mt-2 mb-6">
-            <InventoryPage />
+            <EquipContainer />
           </div>
         )}
 
