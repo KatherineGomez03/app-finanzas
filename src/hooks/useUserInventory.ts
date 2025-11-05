@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 interface Transaction {
     _id: string;
     userId: string | { _id: string };
-    itemId: ItemCardProps;
+    itemId: ItemCardProps | null;
     totalAmount: number;
     createdAt: string;
     updatedAt: string;
@@ -40,8 +40,9 @@ export function useUserInventory() {
 
                 const data: Transaction[] = await res.json();
 
-                // extrae los itemId de cada transacción
-                const extractedItems = data.map((t) => t.itemId);
+                const extractedItems = data
+                    .map((t) => t.itemId)
+                    .filter((item): item is ItemCardProps => !!item && !!item.id);
 
                 setItems(extractedItems);
             } catch (err) {
