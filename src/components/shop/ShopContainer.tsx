@@ -10,7 +10,6 @@ import { useItems } from "@/hooks/useItems";
 interface ShopContainerProps {
     items?: ItemCardProps[]; // viene del backend
     categories?: string[];   // opcional
-    onBuyItem?: (item: ItemCardProps) => void;
 }
 
 export const ShopContainer: React.FC<ShopContainerProps> = ({

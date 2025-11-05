@@ -17,6 +17,7 @@ import { ChallengeSectionActive } from "@/components/challenges/ChallengeSection
 import { ChallengeSectionCompleted } from "@/components/challenges/ChallengeSectionCompleted";
 import ExpenseHistory from "@/components/expenses/ExpenseHistory";
 import BalanceSection from "../balance/BalanceSection";
+import EquipContainer from "../inventory/EquipContainer";
 
 export default function HomeClient() {
   const userData = {
@@ -126,13 +127,13 @@ export default function HomeClient() {
 
         {tab === "tienda" && (
           <div className="w-full mt-2 mb-6 ">
-            <ShopContainer onBuyItem={onBuyGlobal} />
+            <ShopContainer />
           </div>
         )}
 
         {tab === "inventario" && (
           <div className="w-full mt-2 mb-6 ">
-            <InventoryPage />
+            <EquipContainer />
           </div>
         )}
 
