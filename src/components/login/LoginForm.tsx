@@ -67,7 +67,7 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
                     <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 text-blue-300 hover:text-blue-100"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-blue-300 hover:text-blue-100 cursor-pointer"
                     >
                         {showPassword ? (
                             <EyeOff className="w-5 h-5" />
@@ -82,7 +82,7 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
 
             <button
                 type="submit"
-                className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 flex items-center justify-center gap-2"
+                className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 flex items-center justify-center gap-2 cursor-pointer"
             >
                 <LogIn className="w-4 h-4" />
                 ENTRAR AL REINO

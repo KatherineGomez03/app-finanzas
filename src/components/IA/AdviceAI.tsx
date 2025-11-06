@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { Button } from "@/components/challenges/Button";
 
 
 type AdviceAIProps = {
@@ -52,14 +53,16 @@ export default function AdviceAI({
             Meta: ${ahorroActual.toLocaleString()} / ${meta.toLocaleString()}
           </span>
 
-          <button
+          <Button
             onClick={refetch}
-            disabled={loading}
-            className="badge text-xs md:text-sm w-full sm:w-auto justify-center"
+            loading={loading}
+            variant="secondary"
+            size="md"
+            className="w-full sm:w-auto justify-center shadow-mission cursor-pointer"
             aria-label="Refrescar consejos"
           >
-            ⟳ {loading ? "Cargando..." : "Refrescar"}
-          </button>
+            ⟳ Refrescar
+          </Button>
         </div>
       </div>
 

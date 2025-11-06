@@ -115,7 +115,7 @@ export const RegisterContainer = () => {
 
       <button
         type="submit"
-        className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 flex items-center justify-center gap-2"
+        className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 flex items-center justify-center gap-2 cursor-pointer"
       >
         <UserPlus className="w-4 h-4" />
         REGISTRAR

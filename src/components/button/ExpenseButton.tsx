@@ -61,7 +61,7 @@ export default function ExpenseButton() {
             "inline-flex items-center gap-2 rounded-none",
             "border border-[var(--grid)] bg-[var(--surface)] text-[var(--text-primary)]",
             // efectos
-            "hover:bg-[var(--color-coin-bright)] transition-colors duration-150",
+            "hover:bg-[var(--color-coin-bright)] transition-colors duration-150 cursor-pointer",
             // estado activo igual al tab seleccionado
             "data-[active=true]:bg-[var(--color-coin-bright)] data-[active=true]:text-black data-[active=true]:border-white"
           ].join(" ")}
