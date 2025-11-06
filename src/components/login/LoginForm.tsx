@@ -16,6 +16,7 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
         setError('')
 
         try {
+            console.log('Backend URL:', process.env.NEXT_PUBLIC_BACKEND_URL);
             const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
