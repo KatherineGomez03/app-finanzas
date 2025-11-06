@@ -23,7 +23,7 @@ export default function LogoutButton() {
                  hover:bg-red-600 hover:border-red-500 hover:text-white
                  active:translate-y-[1px] transition-all duration-150
                  font-['PressStart2P'] text-[8px] sm:text-[9px]
-                 rounded-sm shadow-[1px_1px_0_#000]"
+                 rounded-sm shadow-[1px_1px_0_#000] cursor-pointer"
     >
       <LogOut className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
       <span className="hidden sm:inline">Salir</span>

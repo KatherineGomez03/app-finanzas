@@ -39,7 +39,7 @@ export default function AuthPage() {
 
             <button
               onClick={() => setView('register')}
-              className="mt-6 underline text-xs w-full text-center"
+              className="mt-6 underline text-xs w-full text-center cursor-pointer"
               type="button"
             >
               ¿Nuevo aventurero? Registrarse
@@ -51,7 +51,7 @@ export default function AuthPage() {
 
             <button
               onClick={() => setView('login')}
-              className="mt-6 underline text-xs w-full text-center"
+              className="mt-6 underline text-xs w-full text-center cursor-pointer"
               type="button"
             >
               ¿Ya tienes cuenta? Iniciar sesión
