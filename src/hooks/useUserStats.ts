@@ -21,8 +21,20 @@ export const useUserStats = () => {
             const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/me`, {
                 headers: { Authorization: `Bearer ${token}` },
             })
+            
+            if (!res.ok) {
+                throw new Error(`Error al obtener datos: ${res.status} ${res.statusText}`);
+            }
+            
             const data = await res.json()
-            const { username, level, health, maxHealth, experience, maxExperience, attack, defense, coins } = data._doc
+            console.log('Datos recibidos:', data); // Para debug
+            
+            if (!data) {
+                throw new Error('No se recibieron datos del servidor');
+            }
+
+            // Extraer datos directamente del objeto data
+            const { username, level, health, maxHealth, experience, maxExperience, attack, defense, coins } = data
             setStats({ username, level, health, maxHealth, experience, maxExperience, attack, defense, coins })
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Error desconocido')
